@@ -1,6 +1,10 @@
-# Future Forest Disturbance Scenarios: Code Repository
+# Future forest disturbance scenarios for Europe: Code Repository
 
-This repository contains the code and resources to create and analyze future disturbance scenarios for forest landscapes. The project is divided into several key steps:
+This repository contains the code and resources to create and analyze future disturbance scenarios for Europe.
+
+
+
+The code is organised in several key steps:
 
 ## Project Workflow
 
@@ -40,4 +44,4 @@ git clone https://github.com/magrueni/disturbance_scenarios_europe.git
 
 ## Acknowledgments
 
-This project utilizes the **Scaling Vegetation Dynamics (SVD)** framework for simulating vegetation dynamics under future scenarios. Contributions and feedback are welcome.
+This project utilizes the **Scaling Vegetation Dynamics (SVD)** framework for simulating vegetation dynamics under future scenarios (see https://github.com/edfm-tum/SVD). 
