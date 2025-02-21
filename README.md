@@ -29,7 +29,7 @@ Evaluate the disturbance scenarios to assess their impacts, with a focus on the 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-repo-name.git
+git clone https://github.com/magrueni/disturbance_scenarios_europe.git
 ```
 
 ## Dependencies
