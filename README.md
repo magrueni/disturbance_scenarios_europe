@@ -8,7 +8,7 @@ This repository contains the code and resources to create and analyze future dis
 Prepare datasets to train the DNN for predicting forest state transitions. This step relies heavily on the **European Forest Simulation Database**, available [here](https://zenodo.org/records/10730807).
 
 ### 2. Training the Deep Neural Network
-Develop and fine-tune a neural network to model forest state transitions based on training data. Details are explained in Grünig et al. (2025) (REF), with code published in this repository: [europe_tree_competition_publi](https://github.com/magrueni/europe_tree_competition_publi).
+Develop and fine-tune a neural network to model forest state transitions based on training data. Details are explained in Grünig et al. (in review), with code published in this repository: [europe_tree_competition_publi](https://github.com/magrueni/europe_tree_competition_publi).
 
 ### 3. Creating Disturbance Modules
 Generate disturbance modules for **wind**, **wildfires**, **bark beetles**, and **forest management**. These modules are based on process understanding and statistical models calibrated on historical disturbance observations published by Senf & Seidl (2021).
@@ -28,15 +28,15 @@ Evaluate the disturbance scenarios to assess their impacts, with a focus on the 
 ## How to Use
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-repo-name.git
-  ```
+```bash
+git clone https://github.com/your-repo-name.git
+```
 
 ## Dependencies
 
-- **Python**: Version X.X or higher  
-- **R**: Version X.X or higher  
-- **Additional Libraries**: Listed in `requirements.txt` or within the respective folders.
+- **Python**: Version 3.9 or higher  
+- **R**: Version 4.4.1 or higher  
+
 
 ## Acknowledgments
 
