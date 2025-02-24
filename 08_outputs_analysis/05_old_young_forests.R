@@ -46,9 +46,6 @@ path_results <-  paste0(path, "/svd_simulations/results_eu/")
 # terra options
 tmpFiles(remove = T)
 
-### functions --------------------------------------------------------------------
-source(paste0(path, "./functions/make_hexagon.R"))
-
 
 ### load some data ---------------------------------------------------------------
 eu_shp <- vect(paste0(path, "/reference_grids/eu_mask.shp"))

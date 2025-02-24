@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------------------------
-# Script Name: 01_svd_grid_processing
+# Script Name: svd_grid_processing
 # Description: This script processes the spatial simulation data outputs for all modules.
 # first, the future simulations, in a second step the historical simulations.
 # 
@@ -37,11 +37,11 @@ library(terra)
 
 ### settings ---------------------------------------------------------------
 path <- "/.../"
-path_public <- "/.../"
-path_out <- paste0(path_public, "/svd_simulations/results_eu/")
+path_sim <- paste0(path, "/svd_simulations/raw/")
+path_out <- paste0(path, "/svd_simulations/results_eu/")
 
-
-master_tab <- read.csv(paste0(path_public, "/svd_simulations/svd_simulations_ids.csv"), sep = ";")
+# simulation overview
+master_tab <- read.csv(paste0(path, "/svd_simulations/svd_simulations_ids.csv"), sep = ";")
 
 
 ### start processing ----------------------------------------------------------
@@ -61,15 +61,16 @@ for(i in sims){
   for(y in seq(10, 80, 10)){
     
     if(file.exists(paste0(path_out, "wind/wind_", y, "_", rcp, "_", gcm, "_", rep, "_10year.tif"))){next}
+    
     if(y == 10){
-      wind_rast <- rast(paste0(path, "/output_sim_eu_", i, "/ccwind/wind_year_", y, "_sim_eu_", i, ".tif"))
+      wind_rast <- rast(paste0(path_sim, "/output_sim_eu_", i, "/ccwind/wind_year_", y, "_sim_eu_", i, ".tif"))
       wind_rast_focal <- wind_rast
     }else{
       
-      if(!file.exists(paste0(path, "/output_sim_eu_", i, "/ccwind/wind_year_", y, "_sim_eu_", i, ".tif"))){
+      if(!file.exists(paste0(path_sim, "/output_sim_eu_", i, "/ccwind/wind_year_", y, "_sim_eu_", i, ".tif"))){
         print(paste0("sim ", i, " incomplete!"))
         next}
-      r <- rast(paste0(path, "/output_sim_eu_", i, "/ccwind/wind_year_", y, "_sim_eu_", i, ".tif"))
+      r <- rast(paste0(path_sim, "/output_sim_eu_", i, "/ccwind/wind_year_", y, "_sim_eu_", i, ".tif"))
       
       # in some years we want to know the total
       if(y %in% c(40, 80)){
@@ -107,14 +108,14 @@ for(i in sims){
 
     
     if(y == 10){
-      fire_rast <- rast(paste0(path, "/output_sim_eu_", i, "/ccfire/firegrid_", y, "_sim_eu_", i, ".tif"))
+      fire_rast <- rast(paste0(path_sim, "/output_sim_eu_", i, "/ccfire/firegrid_", y, "_sim_eu_", i, ".tif"))
       fire_rast_focal <- fire_rast
     }else{
       
-      if(!file.exists(paste0(path, "/output_sim_eu_", i, "/ccfire/firegrid_", y, "_sim_eu_", i, ".tif"))){
+      if(!file.exists(paste0(path_sim, "/output_sim_eu_", i, "/ccfire/firegrid_", y, "_sim_eu_", i, ".tif"))){
         print(paste0("sim ", i, " incomplete!"))
         next}
-      r <- rast(paste0(path, "/output_sim_eu_", i, "/ccfire/firegrid_", y, "_sim_eu_", i, ".tif"))
+      r <- rast(paste0(path_sim, "/output_sim_eu_", i, "/ccfire/firegrid_", y, "_sim_eu_", i, ".tif"))
       
       
       if(y %in% c(40, 80)){
@@ -145,7 +146,7 @@ sims <- c(1:90)
 for(i in sims){
   
   print(i)
-  if(!file.exists(paste0(path, "/output_sim_eu_", i, "/bb_out/bbgrid_10_sim_eu_", i, ".tif"))){next}
+  if(!file.exists(paste0(path_sim, "/output_sim_eu_", i, "/bb_out/bbgrid_10_sim_eu_", i, ".tif"))){next}
 
   rcp <- master_tab[i, "RCP"]
   gcm <- master_tab[i, "GCM"]
@@ -157,18 +158,18 @@ for(i in sims){
   for(y in seq(10, 80, 10)){
 
     if(y == 10){
-      bbtl_rast <- rast(paste0(path, "/output_sim_eu_", i, "/bb_out/bbgrid_", y, "_sim_eu_", i, ".tif"))
+      bbtl_rast <- rast(paste0(path_sim, "/output_sim_eu_", i, "/bb_out/bbgrid_", y, "_sim_eu_", i, ".tif"))
       bbtl_rast[bbtl_rast > 0] <- 1
 
       bbtl_sum <- bbtl_rast
       
     }else{
       
-      if(!file.exists(paste0(path, "/output_sim_eu_", i, "/bb_out/bbgrid_", y, "_sim_eu_", i, ".tif"))){
+      if(!file.exists(paste0(path_sim, "/output_sim_eu_", i, "/bb_out/bbgrid_", y, "_sim_eu_", i, ".tif"))){
         print(paste0("sim ", i, " incomplete!"))
         next}
       # 
-      bbtl_rast <- rast(paste0(path, "/output_sim_eu_", i, "/bb_out/bbgrid_", y, "_sim_eu_", i, ".tif"))
+      bbtl_rast <- rast(paste0(path_sim, "/output_sim_eu_", i, "/bb_out/bbgrid_", y, "_sim_eu_", i, ".tif"))
       bbtl_rast[bbtl_rast < (y-10)] <- 0
       bbtl_rast[bbtl_rast > 0] <- 1
 
@@ -205,7 +206,7 @@ sims <- c(1:90)
 for(i in sims){
   
   print(i)
-  if(!file.exists(paste0(path, "/output_sim_eu_", i, "/mgmt_out/mgmtgrid_10_sim_eu_", i, ".tif"))){next}
+  if(!file.exists(paste0(path_sim, "/output_sim_eu_", i, "/mgmt_out/mgmtgrid_10_sim_eu_", i, ".tif"))){next}
   
   rcp <- master_tab[i, "RCP"]
   gcm <- master_tab[i, "GCM"]
@@ -215,18 +216,18 @@ for(i in sims){
   for(y in seq(10, 80, 10)){
 
     if(y == 10){
-      mgmt_rast <- rast(paste0(path, "/output_sim_eu_", i, "/mgmt_out/mgmtgrid_", y, "_sim_eu_", i, ".tif"))
+      mgmt_rast <- rast(paste0(path_sim, "/output_sim_eu_", i, "/mgmt_out/mgmtgrid_", y, "_sim_eu_", i, ".tif"))
       mgmt_rast[mgmt_rast > 0] <- 1
 
       mgmt_sum <- mgmt_rast
       
     }else{
       
-      if(!file.exists(paste0(path, "/output_sim_eu_", i, "/mgmt_out/mgmtgrid_", y, "_sim_eu_", i, ".tif"))){
+      if(!file.exists(paste0(path_sim, "/output_sim_eu_", i, "/mgmt_out/mgmtgrid_", y, "_sim_eu_", i, ".tif"))){
         print(paste0("sim ", i, " incomplete!"))
         next}
 
-      mgmt_rast <- rast(paste0(path, "/output_sim_eu_", i, "/mgmt_out/mgmtgrid_", y, "_sim_eu_", i, ".tif"))
+      mgmt_rast <- rast(paste0(path_sim, "/output_sim_eu_", i, "/mgmt_out/mgmtgrid_", y, "_sim_eu_", i, ".tif"))
       mgmt_rast[mgmt_rast < (y-10)] <- 0
       mgmt_rast[mgmt_rast > 0] <- 1
 
@@ -270,7 +271,7 @@ sims <- c(91:120)
 for(i in sims){
   
   print(i)
-  if(!file.exists(paste0(path, "/output_sim_eu_", i, "/ccwind/wind_year_10_sim_eu_", i, ".tif"))){next}
+  if(!file.exists(paste0(path_sim, "/output_sim_eu_", i, "/ccwind/wind_year_10_sim_eu_", i, ".tif"))){next}
   
   rcp <- master_tab[i, "RCP"]
   gcm <- master_tab[i, "GCM"]
@@ -281,14 +282,14 @@ for(i in sims){
   for(y in seq(10, 80, 10)){
     
     if(y == 10){
-      wind_rast <- rast(paste0(path, "/output_sim_eu_", i, "/ccwind/wind_year_", y, "_sim_eu_", i, ".tif"))
+      wind_rast <- rast(paste0(path_sim, "/output_sim_eu_", i, "/ccwind/wind_year_", y, "_sim_eu_", i, ".tif"))
       wind_rast_focal <- wind_rast
     }else{
       
-      if(!file.exists(paste0(path, "/output_sim_eu_", i, "/ccwind/wind_year_", y, "_sim_eu_", i, ".tif"))){
+      if(!file.exists(paste0(path_sim, "/output_sim_eu_", i, "/ccwind/wind_year_", y, "_sim_eu_", i, ".tif"))){
         print(paste0("sim ", i, " incomplete!"))
         next}
-      r <- rast(paste0(path, "/output_sim_eu_", i, "/ccwind/wind_year_", y, "_sim_eu_", i, ".tif"))
+      r <- rast(paste0(path_sim, "/output_sim_eu_", i, "/ccwind/wind_year_", y, "_sim_eu_", i, ".tif"))
       
       # in some years we want to know the total
       if(y %in% c(40, 80)){
@@ -327,14 +328,14 @@ for(i in sims){
   for(y in seq(10, 80, 10)){
     
     if(y == 10){
-      fire_rast <- rast(paste0(path, "/output_sim_eu_", i, "/ccfire/firegrid_", y, "_sim_eu_", i, ".tif"))
+      fire_rast <- rast(paste0(path_sim, "/output_sim_eu_", i, "/ccfire/firegrid_", y, "_sim_eu_", i, ".tif"))
       fire_rast_focal <- fire_rast
     }else{
       
-      if(!file.exists(paste0(path, "/output_sim_eu_", i, "/ccfire/firegrid_", y, "_sim_eu_", i, ".tif"))){
+      if(!file.exists(paste0(path_sim, "/output_sim_eu_", i, "/ccfire/firegrid_", y, "_sim_eu_", i, ".tif"))){
         print(paste0("sim ", i, " incomplete!"))
         next}
-      r <- rast(paste0(path, "/output_sim_eu_", i, "/ccfire/firegrid_", y, "_sim_eu_", i, ".tif"))
+      r <- rast(paste0(path_sim, "/output_sim_eu_", i, "/ccfire/firegrid_", y, "_sim_eu_", i, ".tif"))
       
       
       if(y %in% c(40, 80)){
@@ -379,18 +380,18 @@ for(i in sims){
 
     
     if(y == 10){
-      bbtl_rast <- rast(paste0(path, "/output_sim_eu_", i, "/bb_out/bbgrid_", y, "_sim_eu_", i, ".tif"))
+      bbtl_rast <- rast(paste0(path_sim, "/output_sim_eu_", i, "/bb_out/bbgrid_", y, "_sim_eu_", i, ".tif"))
       bbtl_rast[bbtl_rast > 0] <- 1
 
       bbtl_sum <- bbtl_rast
       
     }else{
       
-      if(!file.exists(paste0(path, "/output_sim_eu_", i, "/bb_out/bbgrid_", y, "_sim_eu_", i, ".tif"))){
+      if(!file.exists(paste0(path_sim, "/output_sim_eu_", i, "/bb_out/bbgrid_", y, "_sim_eu_", i, ".tif"))){
         print(paste0("sim ", i, " incomplete!"))
         next}
        
-      bbtl_rast <- rast(paste0(path, "/output_sim_eu_", i, "/bb_out/bbgrid_", y, "_sim_eu_", i, ".tif"))
+      bbtl_rast <- rast(paste0(path_sim, "/output_sim_eu_", i, "/bb_out/bbgrid_", y, "_sim_eu_", i, ".tif"))
       bbtl_rast[bbtl_rast < (y-10)] <- 0
       bbtl_rast[bbtl_rast > 0] <- 1
       
@@ -428,7 +429,7 @@ sims <- c(91:120)
 for(i in sims){
   
   print(i)
-  if(!file.exists(paste0(path, "/output_sim_eu_", i, "/mgmt_out/mgmtgrid_10_sim_eu_", i, ".tif"))){next}
+  if(!file.exists(paste0(path_sim, "/output_sim_eu_", i, "/mgmt_out/mgmtgrid_10_sim_eu_", i, ".tif"))){next}
   
   rcp <- master_tab[i, "RCP"]
   gcm <- master_tab[i, "GCM"]
@@ -437,23 +438,20 @@ for(i in sims){
   if(file.exists(paste0(path_out, "mgmt/mgmt_80_", rcp, "_", gcm, "_", rep, "_summed.tif"))){next}
   
   for(y in seq(10, 80, 10)){
-    
-    # cat(print(paste0(" ", y, " ")))
-    
+
     if(y == 10){
-      mgmt_rast <- rast(paste0(path, "/output_sim_eu_", i, "/mgmt_out/mgmtgrid_", y, "_sim_eu_", i, ".tif"))
+      mgmt_rast <- rast(paste0(path_sim, "/output_sim_eu_", i, "/mgmt_out/mgmtgrid_", y, "_sim_eu_", i, ".tif"))
       mgmt_rast[mgmt_rast > 0] <- 1
-      
-      # mgmt_rast_focal <- mgmt_rast
+
       mgmt_sum <- mgmt_rast
       
     }else{
       
-      if(!file.exists(paste0(path, "/output_sim_eu_", i, "/mgmt_out/mgmtgrid_", y, "_sim_eu_", i, ".tif"))){
+      if(!file.exists(paste0(path_sim, "/output_sim_eu_", i, "/mgmt_out/mgmtgrid_", y, "_sim_eu_", i, ".tif"))){
         print(paste0("sim ", i, " incomplete!"))
         next}
       
-      mgmt_rast <- rast(paste0(path, "/output_sim_eu_", i, "/mgmt_out/mgmtgrid_", y, "_sim_eu_", i, ".tif"))
+      mgmt_rast <- rast(paste0(path_sim, "/output_sim_eu_", i, "/mgmt_out/mgmtgrid_", y, "_sim_eu_", i, ".tif"))
       mgmt_rast[mgmt_rast < (y-10)] <- 0
       mgmt_rast[mgmt_rast > 0] <- 1
       
@@ -485,4 +483,6 @@ for(i in sims){
 }
 
 
+
+### end ------------------------------------------------------------------------
 

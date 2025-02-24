@@ -6,8 +6,8 @@
 #              The data is extracted from multiple simulation runs and historical datasets, 
 #              cleaned, aggregated. 
 #
-# Author: Marc
-# Date: Grünig
+# Author: Marc Grünig
+# Date: 7.2.2025
 #
 #
 # Input:
@@ -21,6 +21,7 @@
 # Notes:
 # - Data from the disturbance mapping cannot be provided here but downloaded here:
 # https://zenodo.org/records/4570157
+# - Data from Patacca et al., 2023 can be downloaded here: https://zenodo.org/records/7319179
 #
 # ------------------------------------------------------------------------------
 
@@ -125,8 +126,8 @@ a_bb <- a %>%
             area_tot = sum(area_m2) * 0.0001) %>% 
   mutate(dat = "real") 
 
-# load Patacca data and calculate percentages to split up the remote sensing data
-dat <- read.csv(paste0(path, "/bb_modeling/disturbance_timeseries_database.csv"), sep = ";")
+# load data from Patacca et al., 2023 and calculate percentages to split up the remote sensing data
+dat <- read.csv(paste0(path, "/disturbance_timeseries_database.csv"), sep = ";")
 
 
 dat_filt <- dat %>% 

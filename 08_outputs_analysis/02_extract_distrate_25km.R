@@ -45,7 +45,7 @@ library(stringr)
 
 # define path
 path <- "/.../"
-path_results <- paste0(path, "/svd_simulations/results_eu/"
+path_results <- paste0(path, "/svd_simulations/results_eu/")
 
 # load masks and hexagons
 eu_shp <- vect(paste0(path,"/reference_grids/eu_mask.shp"))
@@ -58,7 +58,7 @@ sf_obj_forest_mask_ids <- sf_obj_forest_mask %>% st_drop_geometry()
 master_tab <- read.csv(paste0(path, "/svd_simulations/svd_simulations_ids.csv"), sep = ";")
 
 
-### then all together --- 
+### list all spatial outputs --- 
 files_wind <- list.files(paste0(path_results, "/wind/"), pattern = "*_10year.tif", full.names = T)
 files_fire <- list.files(paste0(path_results, "/fire/"), pattern = "*_10year.tif", full.names = T)
 files_bbtl <- list.files(paste0(path_results, "/bbtl/"), pattern = "*_10year.tif", full.names = T)
