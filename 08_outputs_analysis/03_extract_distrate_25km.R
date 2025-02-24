@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------
-# Script Name: 03_extract_distrate_25km
+# Script Name: extract_distrate_25km
 #
 # Description: This scripts take the 10-year timesteps calculated
 # in script 01 and aggregates the data to 25km hexagons.

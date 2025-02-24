@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------------------------
-# Script Name: Disturbance simulation Analysis and Visualization
+# Script Name: annual_outputs_processing.R
 # Description: This script processes and visualizes the annual outputs from the
 #              disturbance simulation for fire, wind, bark beetle outbreaks, 
 #              and forest management.

@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------------------------
-# Script Name: Extreme events analysis
+# Script Name: extreme_events.R
 # Description: This scripts analyses the annual disturbance outputs from SVD simulations
 # to calculate the frequency of extreme events
 #

@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------
-# Script Name: Young & Old forests
+# Script Name: old_young_forests.R
 # Description: This script processes the spatial simulation outputs to extract
 # the share of young and old forests.
 #
@@ -47,7 +47,7 @@ path_results <-  paste0(path, "/svd_simulations/results_eu/")
 tmpFiles(remove = T)
 
 ### functions --------------------------------------------------------------------
-source(paste0(path, "/R_projects/svd/functions/make_hexagon.R"))
+source(paste0(path, "./functions/make_hexagon.R"))
 
 
 ### load some data ---------------------------------------------------------------

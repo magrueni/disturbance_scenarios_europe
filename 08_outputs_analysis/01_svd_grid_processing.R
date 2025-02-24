@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------------------------
-# Script Name: SVD grid processing
+# Script Name: 01_svd_grid_processing
 # Description: This script processes the spatial simulation data outputs for all modules.
 # first, the future simulations, in a second step the historical simulations.
 # 
