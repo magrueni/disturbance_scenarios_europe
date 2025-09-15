@@ -348,9 +348,9 @@ myFuncCmp <- cmpfun(my_function)
 # load data from sqlite -----------------------------------------------------------------------------------
 
 # example datasets
-metadata <- read_csv(paste0(path, "/data_pipeline/metadata_processed_expl.csv"))
-simdata <- read_csv(paste0(path, "/data_pipeline/simdata_expl.csv"))
-climate_slopes <- read_csv(paste0(path, "/data_pipeline/climate_slopes.csv"))
+metadata <- read_csv(paste0(path, "/01_simulation_data_pipeline/metadata_processed_expl.csv"))
+simdata <- read_csv(paste0(path, "/01_simulation_data_pipeline/simdata_expl.csv"))
+climate_slopes <- read_csv(paste0(path, "/01_simulation_data_pipeline/climate_slopes.csv"))
 
 
 # define all scenarios
@@ -369,10 +369,10 @@ for(g in gcms){
     scen_name <- gsub("-", "_", scen_name)
     
     # read in climate means
-    temp_data <- read_csv(paste0("/data/public/Projects/Resonate/publi/data_pipeline/clim_slopes/temp_", scen_name, ".csv"))
+    temp_data <- read_csv(paste0(path, "/01_simulation_data_pipeline/clim_slopes/temp_", scen_name, ".csv"))
     assign(paste0("temp_", scen_name), temp_data)
 
-    prec_data <- read_csv(paste0("/data/public/Projects/Resonate/publi/data_pipeline/clim_slopes/prec_", scen_name, ".csv"))
+    prec_data <- read_csv(paste0(path, "/01_simulation_data_pipeline/clim_slopes/prec_", scen_name, ".csv"))
     assign(paste0("prec_", scen_name), prec_data)
 
   }

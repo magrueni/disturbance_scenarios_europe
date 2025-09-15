@@ -26,7 +26,12 @@ path <- "/.../"
 ### load data ------------------------------------------------------------------
 
 
-plot_dat_agents <- read_csv(paste0(path, "/svd_simulations/all_agents_distarea_final.csv"))
+plot_dat_agents_fut <- read_csv(paste0(path, "/10_results/all_agents_distarea_fut.csv"))
+plot_dat_agents_hist <- read_csv(paste0(path, "/10_results/all_agents_distarea_hist.csv"))
+
+
+# remove 2020 - As no data were available for the year 2020, disturbed area for bark beetle and wind were omitted for 2020 in this analysis. 
+plot_dat_agents <- rbind(plot_dat_agents_fut, plot_dat_agents_hist) 
 plot_dat_agents <- plot_dat_agents %>% filter(!(year == 35 & period == "2001-2020" & agent %in% c("Wind", "Barkbeetle")))
 
 
@@ -48,10 +53,9 @@ mean_values <- plot_dat %>%
             se = sd(dist_area, na.rm = T) / sqrt(n()),
             sd_area = sd(dist_area, na.rm = T)) %>%
   mutate(
-    t_value = qt(0.975, df = n - 1),
-    ci = t_value * se,
-    ci_lower = mean_area - t_value * se,
-    ci_upper = mean_area + t_value * se
+    ci = 1.96 * se,
+    ci_lower = mean_area - ci,
+    ci_upper = mean_area + ci
   )
 
 # Reorder the agents as specified
@@ -78,11 +82,12 @@ mean_values <- mean_values %>%
   mutate(agent = ifelse(agent == "Barkbeetle", "Bark beetle", paste(agent)))
 
 
-write_csv(mean_values, paste0(path, "/figures/plot_data/fig3a_data.csv"))
+write_csv(mean_values, paste0(path, "/11_figures/figure_data/Fig3a.csv"))
 
 
 ### Plotting -------------------------------------------------------------------
-cols <- c("blue", "darkgreen", "darkred")
+met <- met.brewer("Cassatt2", 9)[7]
+cols <- c("darkblue", met, "darkred")
 
 
 # inspired from https://www.cedricscherer.com/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/
@@ -94,15 +99,15 @@ stacked_bars <- ggplot(mean_values, aes(x = factor(period), y = mean_area, fill 
   geom_col(data = subset(mean_values, period == "2001-2020" | period == "1986-2000"),
            aes(fill = "Historical", color = "Historical"), alpha = 0.5, linewidth = 1) +
   scale_color_manual(values = c("Fire" = "darkred",
-                                "Bark beetle" = "darkgreen",
-                                "Wind" = "blue",
+                                "Bark beetle" = met,
+                                "Wind" = "darkblue",
                                 "Historical" = "grey"),
                      name = "Agent",
                      breaks = c("Fire", "Bark beetle", "Wind", "Historical"),
                      labels = c("Fire", "Bark beetle", "Wind", "Historical")) +
   scale_fill_manual(values = c("Fire" = "darkred",
-                               "Bark beetle" = "darkgreen",
-                               "Wind" = "blue",
+                               "Bark beetle" = met,
+                               "Wind" = "darkblue",
                                "Historical" = "grey"),
                     name = "Agent",
                     breaks = c("Fire", "Bark beetle", "Wind", "Historical"),
@@ -114,7 +119,7 @@ stacked_bars <- ggplot(mean_values, aes(x = factor(period), y = mean_area, fill 
   theme(legend.position = "right") +
   facet_wrap2(~scen, strip = strip_themed(clip = "inherit",
                                           background_x = elem_list_rect(fill = c("#ed9b49", "#8d1c06", "#3c0d03")))) +
-theme(legend.position = "right",
+  theme(legend.position = "right",
         axis.text.x = element_text(angle = 45, hjust = 1),  # Rotate x-axis labels
         axis.title.x = element_text(size = 12, margin = margin(t = 20)),              # Adjust x-axis title size
         axis.title.y = element_text(size = 12),              # Adjust y-axis title size
@@ -126,7 +131,7 @@ theme(legend.position = "right",
 
 
 stacked_bars
-ggsave(stacked_bars, filename = paste0(path, "/figures/Fig3a.png"), width = 8, height = 8)
+ggsave(stacked_bars, filename = paste0(path, "/11_figures/Fig3a.pdf"), width = 8, height = 8)
 
 
 ### end ------------------------------------------------------------------------

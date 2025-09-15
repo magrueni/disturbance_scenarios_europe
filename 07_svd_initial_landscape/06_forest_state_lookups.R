@@ -19,12 +19,12 @@ library(tidyverse)
 path <- "/.../"
 
 
-dnn_lookup <- read_csv(paste0(path, "/initial_states/states_lookup_pruned.csv"))
+dnn_lookup <- read_csv(paste0(path, "/03_initial_forest_states/states_lookup_pruned.csv"))
 colnames(dnn_lookup) <- c("code", "stateId")
 dim(dnn_lookup)
 
 # write result
-write.csv(dnn_lookup, paste0(path, "/dnn/states.csv"))
+write.csv(dnn_lookup, paste0(path, "/02_dnn/states.csv"))
 
 
 # create states europe file with information on structure comp, etc.
@@ -44,4 +44,4 @@ states_europe[1, ] <- c(0, "INVALID", "nope", 0, 0, 0, "nope")
 # states_europe %>% filter(stateId == 3058)
 
 # save result
-write_csv(states_europe, paste0(path, "/dnn/states_europe.csv"))
+write_csv(states_europe, paste0(path, "/02_dnn/states_europe.csv"))

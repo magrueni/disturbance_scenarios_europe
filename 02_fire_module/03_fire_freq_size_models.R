@@ -80,8 +80,8 @@ a <- out[which(nfire > 0)] %>%
 
 
 ### Group disturbances to model area and number of storms per year -----------------------------------------------------
-ref_grid_100km <- rast(paste0(path, "/reference_grids/reference_grid_100km.tif"))
-ref_grid_10km <- rast(paste0(path, "/reference_grids/reference_grid_10km.tif"))
+ref_grid_100km <- rast(paste0(path, "/07_reference_grids/reference_grid_100km.tif"))
+ref_grid_10km <- rast(paste0(path, "/07_reference_grids/reference_grid_10km.tif"))
 
 gridid <- ref_grid_100km
 gridid_vect <- as.polygons(ref_grid_100km)

@@ -31,10 +31,10 @@ path <- "/.../"
 
 
 # Studyregion -------------------------------------------------------------
-studyregion <- read_sf(paste0(path, "/fire_module/climate/climategrid_epsg3035.gpkg"))
+studyregion <- read_sf(paste0(path, "04_disturbance_modules/fire_module/climate/climategrid_epsg3035.gpkg"))
 studyregion_latlng <- st_transform(studyregion, "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
 
-cntrs <- read_sf(paste0(path, "/gis/countries/europe.shp"))
+cntrs <- read_sf(paste0(path, "/06_gis/countries/europe.shp"))
 
 # define projections
 proj_wgs84 <- "+proj=longlat +datum=WGS84 +no_defs"
@@ -113,7 +113,7 @@ for (rcp in rcps) {
         vpd_method2 <- vpd_calc(summer_tas_proj, td)
         
         # Save results ----------------------------------------------------
-        terra::writeRaster(vpd_method2, paste0(path, "/fire_module/climate/vpd_summer_", year, "_", gcm, "_", rcp, "_leae.tif"), overwrite = TRUE)
+        terra::writeRaster(vpd_method2, paste0(path, "/04_disturbance_modules /fire_module/climate/vpd_summer_", year, "_", gcm, "_", rcp, "_leae.tif"), overwrite = TRUE)
       }
     }
   }
@@ -135,8 +135,8 @@ cordex_stack <- raster::stack()
 # Loop through each year for bias correction
 for (y in years) {
   # Load ERA5 and Cordex data
-  era5 <- rast(paste0(path, "/fire_module/climate/era5_summer_vpd_", y, ".tif"))
-  cord <- rast(paste0(path, "/fire_module/climate/vpd_summer_", y, "_ensemble_historical_leae.tif"))
+  era5 <- rast(paste0(path, "/04_disturbance_modules/fire_module/climate/era5_summer_vpd_", y, ".tif"))
+  cord <- rast(paste0(path, "/04_disturbance_modules/fire_module/climate/vpd_summer_", y, "_ensemble_historical_leae.tif"))
   
   # Project ERA5 to match Cordex
   era5 <- terra::project(era5, cord)
@@ -178,7 +178,7 @@ plot(diff_diff)
 
 # Bias correction for historical ensembles
 for (y in years) {
-  rast <- rast(paste0(path, "/fire_module/climate/vpd_summer_", y, "_ensemble_historical_leae.tif"))
+  rast <- rast(paste0(path, "/04_disturbance_modules/fire_module/climate/vpd_summer_", y, "_ensemble_historical_leae.tif"))
   
   # Project, crop, and mask the raster
   rast <- terra::project(rast, bias_leae)
@@ -189,7 +189,7 @@ for (y in years) {
   rast_new <- rast + bias_leae
   
   # Save the corrected raster
-  terra::writeRaster(rast_new, paste0(path, "/fire_module/climate/vpd_summer_", y, "_ensemble_historical_leae_v2_biascorrected.tif"), overwrite = TRUE)
+  terra::writeRaster(rast_new, paste0(path, "/04_disturbance_modules/fire_module/climate/vpd_summer_", y, "_ensemble_historical_leae_v2_biascorrected.tif"), overwrite = TRUE)
 }
 
 
@@ -205,7 +205,7 @@ for (r in rcps) {
     
     for (y in years) {
       # Check if the file exists, if not, create the bias
-      file_path <- paste0(path, "/fire_module/climate/vpd_summer_", y, "_", g, "_", r, "_leae.tif")
+      file_path <- paste0(path, "/04_disturbance_modules/fire_module/climate/vpd_summer_", y, "_", g, "_", r, "_leae.tif")
       rast <- rast(file_path)
       
       # Project, crop, and mask the raster, then apply bias correction
@@ -215,7 +215,7 @@ for (r in rcps) {
       rast_new <- rast + bias_leae
       
       # Save the corrected raster
-      terra::writeRaster(rast_new, paste0(path, "/fire_module/climate/summer_vpd/vpd_summer_", y, "_", g, "_", r, "_leae_v2_biascorrected.tif"), overwrite = TRUE)
+      terra::writeRaster(rast_new, paste0(path, "/04_disturbance_modules/fire_module/climate/summer_vpd/vpd_summer_", y, "_", g, "_", r, "_leae_v2_biascorrected.tif"), overwrite = TRUE)
     }
   }
 }
@@ -240,9 +240,9 @@ for(y in 1986:2020) {
   year_aftr <- ifelse(y == 2020, y, y + 1)
   
   # Load data for the current, previous, and following years
-  summer_vpd <- rast(paste0(path, "/fire_module/climate/summer_vpd/vpd_summer_", y, "_ensemble_historical_leae_v2_biascorrected.tif"))
-  prev_summer_vpd <- rast(paste0(path, "/fire_module/climate/summer_vpd/vpd_summer_", year_prev, "_ensemble_historical_leae_v2_biascorrected.tif"))
-  aftr_summer_vpd <- rast(paste0(path, "/fire_module/climate/summer_vpd/vpd_summer_", year_aftr, "_ensemble_historical_leae_v2_biascorrected.tif"))
+  summer_vpd <- rast(paste0(path, "/04_disturbance_modules/fire_module/climate/summer_vpd/vpd_summer_", y, "_ensemble_historical_leae_v2_biascorrected.tif"))
+  prev_summer_vpd <- rast(paste0(path, "/04_disturbance_modules/fire_module/climate/summer_vpd/vpd_summer_", year_prev, "_ensemble_historical_leae_v2_biascorrected.tif"))
+  aftr_summer_vpd <- rast(paste0(path, "/04_disturbance_modules/fire_module/climate/summer_vpd/vpd_summer_", year_aftr, "_ensemble_historical_leae_v2_biascorrected.tif"))
   
   # Calculate the rolling maximum of the VPD data across the three years
   rolling_max_vpd_summer <- max(summer_vpd, prev_summer_vpd, aftr_summer_vpd)
@@ -263,7 +263,7 @@ for(y in 1986:2020) {
 
 # Convert the VPD stack to a data frame and save it as a CSV
 vpd_df <- as.data.frame(vpd_stack)
-write.csv(vpd_df, paste0(path, "/fire_module/climate/hist_vpd_100km.csv"), row.names = F)
+write.csv(vpd_df, paste0(path, "/04_disturbance_modules/fire_module/climate/hist_vpd_100km.csv"), row.names = F)
 
 
 # then also for future climate
@@ -288,9 +288,9 @@ for(g in gcms) {
       year_aftr <- ifelse(y == 2100, y, y + 1)
       
       # Load data for the current, previous, and following years for future scenarios
-      summer_vpd <- rast(paste0(path, "/fire_module/climate/summer_vpd/vpd_summer_", y, "_", g, "_", rcp, "_leae_v2_biascorrected.tif"))
-      prev_summer_vpd <- rast(paste0(path, "/fire_module/climate/summer_vpd/vpd_summer_", year_prev, "_", g, "_", rcp, "_leae_v2_biascorrected.tif"))
-      aftr_summer_vpd <- rast(paste0(path, "/fire_module/climate/summer_vpd/vpd_summer_", year_aftr, "_", g, "_", rcp, "_leae_v2_biascorrected.tif"))
+      summer_vpd <- rast(paste0(path, "/04_disturbance_modules/fire_module/climate/summer_vpd/vpd_summer_", y, "_", g, "_", rcp, "_leae_v2_biascorrected.tif"))
+      prev_summer_vpd <- rast(paste0(path, "/04_disturbance_modules/fire_module/climate/summer_vpd/vpd_summer_", year_prev, "_", g, "_", rcp, "_leae_v2_biascorrected.tif"))
+      aftr_summer_vpd <- rast(paste0(path, "/04_disturbance_modules/fire_module/climate/summer_vpd/vpd_summer_", year_aftr, "_", g, "_", rcp, "_leae_v2_biascorrected.tif"))
       
       # Calculate the rolling maximum of the VPD data
       rolling_max_vpd_summer <- max(summer_vpd, prev_summer_vpd, aftr_summer_vpd)
@@ -311,7 +311,7 @@ for(g in gcms) {
     
     # Convert the VPD stack to a data frame and save it as a CSV
     vpd_df <- as.data.frame(vpd_stack)
-    write.csv(vpd_df, paste0(path, "/fire_module/climate/fut_data_allgrids", g, "_", rcp, ".csv"), row.names = F)
+    write.csv(vpd_df, paste0(path, "/04_disturbance_modules/fire_module/climate/fut_data_allgrids", g, "_", rcp, ".csv"), row.names = F)
     
   }
 }

@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # Script Name: fig1_disturbance_rates.R
 # Description: This script processes the annual outputs of all agents and creates
-# plot. In particular figure 1a, figure S1 and figures S10-S12 are created
+# plot. In particular figure 1a, figure S1 and figures S16-S18 are created
 #
 # Author: Marc Grünig
 # Date: 7.2.2025
@@ -10,7 +10,7 @@
 #   - Annual outputs from script 4
 #
 # Output:
-#   - figure 1a, figure S1, S10 - S12
+#   - figure 1a, figure S1, S16 - S18
 # ------------------------------------------------------------------------------
 
 
@@ -26,7 +26,7 @@ path <- "/.../"
 
 
 ### load fire data -------------------------------------------------------------
-df_plot_fire <- read_csv(paste0(path, "/svd_simulations/results_eu/fire_results_fut_final.csv"))
+df_plot_fire <- read_csv(paste0(path, "/10_results/fire_results_fut_final.csv"))
 df_plot_fire <- df_plot_fire %>% 
   group_by(Year, sim, scen) %>% 
   summarize(burned_area = sum(realized_size, na.rm = T))
@@ -38,7 +38,7 @@ mean_by_year <- df_plot_fire %>%
 
 
 # combine with historical data
-hist_fire <- read_csv(paste0(path, "/svd_simulations/results_eu/fire_results_hist_final.csv"))
+hist_fire <- read_csv(paste0(path, "/10_results/fire_results_hist_final.csv"))
 hist_fire_plot <- hist_fire %>% 
   mutate(scen = "hist",
          sim = 0,
@@ -50,8 +50,8 @@ df_plot_all_fire <- rbind(hist_fire_plot, mean_by_year %>%
 
 
 
-write_csv(df_plot_fire, paste0(path_public, "/figures/plot_data/figure_data/figS10_fut.csv"))
-write_csv(df_plot_all_fire, paste0(path_public, "/figures/plot_data/figure_data/figS10_hist.csv"))
+write_csv(df_plot_fire, paste0(path_public, "/11_figures/figure_data/figure_data/FigS16_fut.csv"))
+write_csv(df_plot_all_fire, paste0(path_public, "/11_figures/figure_data/figure_data/FigS16_hist.csv"))
 
 
 # plot 
@@ -84,7 +84,7 @@ p1_fire <- ggplot() +
         axis.title.y = element_text(vjust = 1))
 
 p1_fire
-ggsave(p1_fire, filename = paste0(path, "/figures/figS10.png"), width = 10, height = 8)
+ggsave(p1_fire, filename = paste0(path, "/11_figures/FigS16.png"), width = 10, height = 8)
 
 # 
 # # Using the cowplot package
@@ -123,7 +123,7 @@ ggsave(p1_fire, filename = paste0(path, "/figures/figS10.png"), width = 10, heig
 
 
 ### wind data ------------------------------------------------------------------
-df_plot_wind <- read_csv(paste0(path, "/svd_simulations/results_eu/wind_results_fut_final.csv"))
+df_plot_wind <- read_csv(paste0(path, "/10_results/wind_results_fut_final.csv"))
 df_plot_wind <- df_plot_wind %>% 
   group_by(Year, sim, scen) %>% 
   summarize(wind_area = sum(cells_affected  , na.rm = T))
@@ -135,7 +135,7 @@ mean_by_year <- df_plot_wind %>%
 
 
 # combine with historical data
-hist_wind <- read_csv(paste0(path, "/svd_simulations/results_eu/wind_results_hist_final.csv"))
+hist_wind <- read_csv(paste0(path, "/10_results/wind_results_hist_final.csv"))
 hist_wind_plot <- hist_wind %>% 
   mutate(scen = "hist",
          sim = 0,
@@ -147,8 +147,8 @@ df_plot_all_wind <- rbind(hist_wind_plot, mean_by_year %>%
   filter(Year != 2020) # exclude because we don't have the proportion between wind and bbtl
 
 
-write_csv(df_plot_wind, paste0(path_public, "/figures/plot_data/figS12_fut.csv"))
-write_csv(df_plot_all_wind, paste0(path_public, "/figures/plot_data/figure_data/figS12_hist.csv"))
+write_csv(df_plot_wind, paste0(path_public, "/11_figures/figure_data/FigS18_fut.csv"))
+write_csv(df_plot_all_wind, paste0(path_public, "/11_figures/figure_data/figure_data/FigS18_hist.csv"))
 
 
 # Plot the data and mean lines
@@ -176,14 +176,14 @@ p1_wind <- ggplot() +
   guides(col="none") +
   theme(text = element_text(size = 16))  # Adjust the size as needed
 p1_wind
-ggsave(p1_wind, filename = paste0(path, "/figures/figS12.png"), width = 10, height = 8)
+ggsave(p1_wind, filename = paste0(path, "/11_figures/FigS18.png"), width = 10, height = 8)
 
 
 
 
 
 ### bark beetle ----------------------------------------------------------------
-df_plot_bbtl <- read_csv(paste0(path, "/svd_simulations/results_eu/bbtl_results_fut_final.csv"))
+df_plot_bbtl <- read_csv(paste0(path, "/10_results/bbtl_results_fut_final.csv"))
 df_plot_bbtl <- df_plot_bbtl %>% 
   group_by(Year, sim, scen) %>% 
   summarize(bbtl_area = sum(n_impact  , na.rm = T))
@@ -195,7 +195,7 @@ mean_by_year <- df_plot_bbtl %>%
 
 
 # combine with historical data
-hist_bbtl <- read_csv(paste0(path, "/svd_simulations/results_eu/bbtl_results_hist_final.csv"))
+hist_bbtl <- read_csv(paste0(path, "/10_results/bbtl_results_hist_final.csv"))
 hist_bbtl_plot <- hist_bbtl %>% 
   mutate(scen = "hist",
          sim = 0,
@@ -207,8 +207,8 @@ df_plot_all_bbtl <- rbind(hist_bbtl_plot, mean_by_year %>%
   filter(Year != 2020) # exclude because we don't have the proportion between wind and bbtl
 
 
-write_csv(df_plot_wind, paste0(path_public, "/figures/plot_data/figS11_fut.csv"))
-write_csv(df_plot_all_wind, paste0(path_public, "/figures/plot_data/figure_data/figS11_hist.csv"))
+write_csv(df_plot_wind, paste0(path_public, "/11_figures/figure_data/FigS17_fut.csv"))
+write_csv(df_plot_all_wind, paste0(path_public, "/11_figures/figure_data/figure_data/FigS17_hist.csv"))
 
 
 # plot 
@@ -240,7 +240,7 @@ p1_bbtl <- ggplot() +
         axis.title.y = element_text(vjust = 1))
 
 p1_bbtl
-ggsave(p1_bbtl, filename = paste0(path, "/figures/figS11.png"), width = 10, height = 8)
+ggsave(p1_bbtl, filename = paste0(path, "/11_figures/FigS17.png"), width = 10, height = 8)
 
 
 
@@ -270,9 +270,9 @@ df_plot_all_hist <- rbind(df_plot_all_fire %>%
                             rename("dist_area" = "wind_area_mean") %>%
                             mutate(agent = "Wind") %>%
                             mutate(scen = "Historical"),
-                          df_plot_all_bb %>%
+                          df_plot_all_bbtl %>%
                             filter(Year <= 2020) %>% 
-                            rename("dist_area" = "bb_area_mean") %>%
+                            rename("dist_area" = "bbtl_area_mean") %>%
                             mutate(agent = "Bark beetle")) %>%
   mutate(sim = as.numeric(0))
 
@@ -297,8 +297,8 @@ fut_dat <- df_combined %>%
   filter(scen != "Historical")
 
 
-write_csv(fut_dat, paste0(path, "/svd_simulations/results_eu/fut_dist_annual_final.csv"))
-write_csv(hist_dat, paste0(path, "/svd_simulations/results_eu/hist_dist_annual_final.csv"))
+write_csv(fut_dat, paste0(path, "/10_results/fut_dist_annual_final.csv"))
+write_csv(hist_dat, paste0(path, "/10_results/hist_dist_annual_final.csv"))
 
 
 ### figure 1a -------------------------------------------------------------------
@@ -314,8 +314,8 @@ historical_area <- 207334385
 
 
 # # load data
-# fut_dat <- read_csv(paste0(path, "/svd_simulations/results_eu/fut_dist_annual_final.csv"))
-# hist_dat <- read_csv(paste0(path, "/svd_simulations/results_eu/hist_dist_annual_final.csv"))
+# fut_dat <- read_csv(paste0(path, "/10_results/fut_dist_annual_final.csv"))
+# hist_dat <- read_csv(paste0(path, "/10_results/hist_dist_annual_final.csv"))
 
 
 df_combined_sub <- rbind(hist_dat %>% filter(Year <= 2020), fut_dat %>% filter(Year > 2020))
@@ -355,8 +355,8 @@ df_boxplot <- df_combined_sub_hist %>%
 
 
 
-write_csv(df_boxplot, paste0(path_public, "/figures/plot_data/fig1a_figS1_hist.csv"))
-write_csv(df_plot, paste0(path_public, "/figures/plot_data/fig1a_figS1_fut.csv"))
+write_csv(df_boxplot, paste0(path, "/11_figures/figure_data/Fig1a_FigS1_hist.csv"))
+write_csv(df_plot, paste0(path, "/11_figures/figure_data/Fig1a_FigS1_fut.csv"))
 
 
 
@@ -396,7 +396,7 @@ all_plot <- ggplot() +
 
 p_fin <- all_plot + theme(legend.position = "none")
 p_fin
-ggsave(p_fin, filename = paste0(path, "/figures/fig1a.png"), width = 6, height = 5)
+ggsave(p_fin, filename = paste0(path, "/11_figures/Fig1a.png"), width = 6, height = 5)
 
 
 
@@ -440,7 +440,7 @@ all_plot <- ggplot() +
 p_fin <- all_plot + theme(legend.position = "none")
 p_fin
 
-ggsave(p_fin, filename = paste0(path, "/figures/figS1.png"), width = 6, height = 5)
+ggsave(p_fin, filename = paste0(path, "/11_figures/FigS1.png"), width = 6, height = 5)
 
 
 

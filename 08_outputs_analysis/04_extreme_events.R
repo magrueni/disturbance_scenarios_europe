@@ -30,11 +30,11 @@ path <- "/.../"
 ### load data ------------------------------------------------------------------
 
 # master tab to get the gcm and rcp information
-master_tab <- read.csv(paste0(path, "/svd_simulations/svd_simulations_ids.csv"), sep = ";")
+master_tab <- read.csv(paste0(path, "/09_svd_simulations/svd_simulations_ids.csv"), sep = ";")
 
 # processed simulation outputs
-fut_dat <- read_csv(paste0(path, "/svd_simulations/results_eu/fut_dist_annual_final.csv"))
-hist_dat <- read_csv(paste0(path, "/svd_simulations/results_eu/hist_dist_annual_final.csv"))
+fut_dat <- read_csv(paste0(path, "/10_results/fut_dist_annual_final.csv"))
+hist_dat <- read_csv(paste0(path, "/10_results/hist_dist_annual_final.csv"))
 
 
 ### data processing ------------------------------------------------------------
@@ -42,7 +42,7 @@ hist_dat <- read_csv(paste0(path, "/svd_simulations/results_eu/hist_dist_annual_
 ### for fire ---
 
 # load data and get the scenario information
-fire_dat_plot_hist <- read_csv(paste0(path, "/svd_simulations/results_eu/fire_results_final.csv"))
+fire_dat_plot_hist <- read_csv(paste0(path, "/10_results/fire_results_final.csv"))
 fire_dat_plot_hist <- fire_dat_plot_hist %>%
   mutate(scen = ifelse(sim == "0", "Historical", scen),
          sim = ifelse(sim == "0", "99", sim)) %>% 
@@ -137,7 +137,7 @@ summary_table_fire
 
 
 ### for wind ---
-wind_dat_plot_hist <- read_csv(paste0(path, "/svd_simulations/results_eu/wind_results_final.csv"))
+wind_dat_plot_hist <- read_csv(paste0(path, "/10_results/wind_results_final.csv"))
 wind_dat_plot_hist <- wind_dat_plot_hist %>% 
   filter(!(sim == 0 & year == 35)) # remove 2020 from historical data as there was no splitting up to agents
 wind_dat_plot_hist <- wind_dat_plot_hist %>% 
@@ -207,7 +207,7 @@ summary_table_wind
 
 
 ### for BB ---
-bbtl_dat_plot_hist <- read_csv(paste0(path, "/svd_simulations/results_eu/bbtl_results_final.csv"))
+bbtl_dat_plot_hist <- read_csv(paste0(path, "/10_results/bbtl_results_final.csv"))
 bbtl_dat_plot_hist <- bbtl_dat_plot_hist %>% 
   filter(!(sim == 0 & year == 35))# remove 2020 from historical data as there was no splitting up to agents
 

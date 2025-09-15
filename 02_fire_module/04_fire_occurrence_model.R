@@ -73,9 +73,9 @@ d_sf <- a %>%
 crs_leae <- "+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs" 
 
 # refernece grid
-ref_grid_100km <- rast(paste0(path, "/reference_grids/reference_grid_100km.tif"))
-ref_grid_10km <- rast(paste0(path, "/reference_grids/reference_grid_10km.tif"))
-ref_grid_1km <- rast(paste0(path, "/reference_grids/reference_grid_1km.tif"))
+ref_grid_100km <- rast(paste0(path, "/07_reference_grids/reference_grid_100km.tif"))
+ref_grid_10km <- rast(paste0(path, "/07_reference_grids/reference_grid_10km.tif"))
+ref_grid_1km <- rast(paste0(path, "/07_reference_grids/reference_grid_1km.tif"))
 
 # mask for Europe
 eu_mask_wgs <- rast(paste0(path, "/fire_module/gis/EU_Mask.tif"))

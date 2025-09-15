@@ -32,8 +32,8 @@ path <- "/.../"
 
 ### gis load -------------------------------------------------------------------
 eu.ext <- c(-10,50,35,80)
-eu_poly <- vect(paste0(path, "/3pg/gis/europe.shp"))
-eu_poly_lr <- vect(paste0(path, "/3pg/gis/europe_lowres.shp"))
+eu_poly <- vect(paste0(path, "/06_gis/europe.shp"))
+eu_poly_lr <- vect(paste0(path, "/06_gis/europe_lowres.shp"))
 
 proj_forest <- "+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs"
 proj <- "+proj=longlat +datum=WGS84 +no_defs"
@@ -138,11 +138,11 @@ env_df <- as.data.frame(env_rast, xy = T)
 
 
 writeRaster(env_rast,
-            paste0(path, "/initial_states/initial_soil_rast.tif"),
+            paste0(path, "/03_initial_forest_states/initial_soil_rast.tif"),
             overwrite = T)
 
 
-env_rast <- rast(paste0(path, "/initial_states/initial_soil_rast.tif"))
+env_rast <- rast(paste0(path, "/03_initial_forest_states/initial_soil_rast.tif"))
 env_df <- as.data.frame(env_rast, xy = T, na.rm = T)
 
 
@@ -159,18 +159,18 @@ head(data_df_new)
 nrow(data_df_new[is.na(data_df_new$climateId),])
 
 write.csv(data_df_new,
-          paste0(path, "/initial_states/initial_soil.csv"),
+          paste0(path, "/03_initial_forest_states/initial_soil.csv"),
           row.names = F)
 
 
 
 ### load initial vegetation file and aggregate to that resolution -------------------------------
-init_soil_100 <- rast(paste0(path, "/initial_states/initial_soil_rast.tif"))
+init_soil_100 <- rast(paste0(path, "/03_initial_forest_states/initial_soil_rast.tif"))
 
 env_df <- as.data.frame(init_soil_100, xy = T)
 
 
-init_veg_100 <- rast(paste0(path, "/initial_states/init_veg.tif"))
+init_veg_100 <- rast(paste0(path, "/03_initial_forest_states/init_veg.tif"))
 
 # convert soil to the resolution of the veg if not correct
 init_soil_100 <- terra::resample(env_rast, init_veg_100, method="mode")
@@ -181,19 +181,19 @@ init_soil_100 <- crop(extend(init_soil_100, init_veg_100), init_veg_100)
 init_soil_100 <- terra::mask(init_soil_100, init_veg_100)
 
 writeRaster(init_soil_100, 
-            paste0(path, "/initial_states/init_soil.tif"),
+            paste0(path, "/03_initial_forest_states/init_soil.tif"),
             overwrite = T,
             datatype="INT4S")
 
 writeRaster(init_veg_100, 
-            paste0(path, "/initial_states/init_veg_v2.tif"),
+            paste0(path, "/03_initial_forest_states/init_veg_v2.tif"),
             datatype="INT2S", overwrite=T)  
 
 
 # if some IDs are missing in the CSV file:
-init_soil_100 <- rast(paste0(path, "/initial_states/init_soil.tif"))
+init_soil_100 <- rast(paste0(path, "/03_initial_forest_states/init_soil.tif"))
 soil_vals <- unique(init_soil_100)
-init_soil_dat <- read.csv(paste0(path, "/initial_states/initial_soil.csv"))
+init_soil_dat <- read.csv(paste0(path, "/03_initial_forest_states/initial_soil.csv"))
 
 
 length(unique(init_soil_dat$id))

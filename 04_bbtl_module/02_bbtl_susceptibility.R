@@ -107,7 +107,7 @@ plot(1-0.8*exp(-4.2*(x/100)^3.3) )
 # now that we get the correct information on the probability damage, we can load the svd state matrix and calculate the susceptibility for each state!
 
 # load states lookup table
-states <- read_csv(paste0(path, "/dnn/dnn_states_lookup.csv"))
+states <- read_csv(paste0(path, "/02_dnn/dnn_states_lookup.csv"))
 
 # state matrix
 states_meta <- read_csv(paste0(path, '/dnn/states_europe_meta.csv'))
@@ -115,7 +115,7 @@ states_meta_spruce <- states_meta %>% dplyr::select(stateId, unique.str, piab) %
   rename("state" = "unique.str")
 
 # load the age estimation model
-mod <- readRDS(paste0(path, "/bbtl_module/age_estimator.rds"))
+mod <- readRDS(paste0(path, "/04_disturbance_modules/bbtl_module/age_estimator.rds"))
 
 # lookup for each 
 states_check <- states %>% 
@@ -161,7 +161,7 @@ write_csv(states_check, paste0(path, "/bbtl_module/states_bb.csv"))
 source("./functions/states_mapping_function.R")
 
 # get the lookup for the states and extract PIAB states
-states <- read_csv(paste0(path, "/dnn/dnn_states_lookup.csv"))
+states <- read_csv(paste0(path, "/02_dnn/dnn_states_lookup.csv"))
 dnn_lookup <- rbind(c("non_state", -1), states)
 dnn_lookup_piab <- dnn_lookup %>% filter(grepl("PIAB", state)) 
 dnn_lookup_no_piab <- dnn_lookup %>% filter(!grepl("piab|PIAB", state)) %>% bind_rows(., dnn_lookup_piab[1,]) %>% mutate(stateID = as.numeric(stateID)) %>% as.data.frame()
@@ -201,7 +201,7 @@ state_transition_mat2 <- state_transition_mat %>%
   mutate(key = 0)
 state_transition_mat <- rbind(state_transition_mat, state_transition_mat2)
 
-write_csv(state_transition_mat, paste0(path, "/bbtl_module/transition_matrix_bb.csv"))    
+write_csv(state_transition_mat, paste0(path, "/04_disturbance_modules/bbtl_module/transition_matrix_bb.csv"))    
 
 
 ### end ---------------

@@ -18,14 +18,14 @@ library(scales)
 
 path <- "/.../"
 
-master_tab <- read.csv(paste0(path, "/svd_simulations/svd_simulations_ids.csv"), sep = ";")
+master_tab <- read.csv(paste0(path, "/09_svd_simulations/svd_simulations_ids.csv"), sep = ";")
 
 
 
 ### for fire ---
 
 # load data and get the scenario information
-fire_dat_plot_hist <- read_csv(paste0(path, "/svd_simulations/results_eu/fire_results_final.csv"))
+fire_dat_plot_hist <- read_csv(paste0(path, "/10_results/fire_results_final.csv"))
 fire_dat_plot_hist <- fire_dat_plot_hist %>% 
   mutate(scen = ifelse(sim == "0", "Historical", scen),
          sim = ifelse(sim == "0", "99", sim)) %>% 
@@ -37,7 +37,7 @@ fire_dat_plot_hist <- fire_dat_plot_hist %>%
   summarize(burned_area = mean(burned_area, na.rm = T)) 
 
 
-write_csv(fire_dat_plot_hist, paste0(path, "/figures/plot_data/fig3b_fire_extremes.csv"))
+write_csv(fire_dat_plot_hist, paste0(path, "/11_figures/figure_data/fig3b_fire_extremes.csv"))
 
 # get historical data and calculate range from Q10 to Q90
 hist_mean <- fire_dat_plot_hist %>% 
@@ -94,13 +94,13 @@ p1_fire
 
 
 
-ggsave(p1_fire, filename = paste0(path, "/figures/Fig3b_extremes_fires.png"),
+ggsave(p1_fire, filename = paste0(path, "/11_figures/Fig3b_extremes_fires.png"),
        width = 5, height = 4)
 
 
 
 ### for wind ---
-wind_dat_plot_hist <- read_csv(paste0(path, "/svd_simulations/results_eu/wind_results_final.csv"))
+wind_dat_plot_hist <- read_csv(paste0(path, "/09_svd_simulations/results_eu/wind_results_final.csv"))
 wind_dat_plot_hist <- wind_dat_plot_hist %>% 
   filter(!(sim == 0 & year == 35))# remove 2020 from historical data as there was no splitting up to agents
 wind_dat_plot_hist <- wind_dat_plot_hist %>% 
@@ -113,7 +113,7 @@ wind_dat_plot_hist <- wind_dat_plot_hist %>%
   group_by(year, scen) %>% 
   summarize(dist_area = mean(dist_area, na.rm = T)) 
 
-write_csv(wind_dat_plot_hist, paste0(path, "/figures/plot_data/fig3c_wind_extremes.csv"))
+write_csv(wind_dat_plot_hist, paste0(path, "/11_figures/figure_data/fig3c_wind_extremes.csv"))
 
 
 hist_mean <- wind_dat_plot_hist %>% 
@@ -170,7 +170,7 @@ p1_wind
 
 
 
-ggsave(p1_wind, filename = paste0(path, "/figures/Fig3c_extremes_wind.png"),
+ggsave(p1_wind, filename = paste0(path, "/11_figures/Fig3c_extremes_wind.png"),
        width = 5, height = 4)
 
 
@@ -178,7 +178,7 @@ ggsave(p1_wind, filename = paste0(path, "/figures/Fig3c_extremes_wind.png"),
 
 
 ### for bbtl ---
-bbtl_dat_plot_hist <- read_csv(paste0(path, "/svd_simulations/results_eu/bbtl_results_final.csv"))
+bbtl_dat_plot_hist <- read_csv(paste0(path, "/09_svd_simulations/results_eu/bbtl_results_final.csv"))
 bbtl_dat_plot_hist <- bbtl_dat_plot_hist %>% 
   filter(!(sim == 0 & year == 35))# remove 2020 from historical data as there was no splitting up to agents
 bbtl_dat_plot_hist <- bbtl_dat_plot_hist %>% 
@@ -192,7 +192,7 @@ bbtl_dat_plot_hist <- bbtl_dat_plot_hist %>%
   summarize(dist_area = mean(dist_area, na.rm = T)) 
 
 
-write_csv(bbtl_dat_plot_hist, paste0(path, "/figures/plot_data/fig3d_bbtl_extremes.csv"))
+write_csv(bbtl_dat_plot_hist, paste0(path, "/11_figures/figure_data/fig3d_bbtl_extremes.csv"))
 
 
 hist_mean <- bbtl_dat_plot_hist %>% 
@@ -246,7 +246,7 @@ p1_bbtl <- ggplot(bbtl_dat_plot_hist %>% filter(scen != "Historical")) +
 
 p1_bbtl
 
-ggsave(p1_bbtl, filename = paste0(path, "/figures/Fig3d_extremes_bbtl.png"),
+ggsave(p1_bbtl, filename = paste0(path, "/11_figures/Fig3d_extremes_bbtl.png"),
        width = 5, height = 4)
 
 
@@ -276,7 +276,7 @@ legend
 
 legend_extremes <- cowplot::get_legend(legend)
 
-# ggsave(legend_extremes, filename = paste0(path, "/svd_simulations/results_eu/figures/extremes_legend_heat.png"), width = 7.5, height = 7.5)
+# ggsave(legend_extremes, filename = paste0(path, "/09_svd_simulations/results_eu/11_figures/extremes_legend_heat.png"), width = 7.5, height = 7.5)
 
 
 ### end ------------------------------------------------------------------------

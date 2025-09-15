@@ -31,7 +31,7 @@ path <- "/.../"
 ### Data Preprocessing ---------------------------------------------------------
 
 # load spatial data
-ref_grid_100km <- rast(paste0(path, "/reference_grids/reference_grid_100km.tif"))
+ref_grid_100km <- rast(paste0(path, "/07_reference_grids/reference_grid_100km.tif"))
 gridid <- ref_grid_100km
 gridid_vect <- as.polygons(ref_grid_100km)
 gridid_df <- as.data.frame(gridid, xy = T)
@@ -41,7 +41,7 @@ proj_laea <- "+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GR
 
 # load patches that were assigned to management
 d <- list.files(
-  paste0(path, "/mgmt_module/patches"), 
+  paste0(path, "/04_disturbance_modules/mgmt_module/patches"), 
   pattern = "patches", 
   full.names = TRUE
 ) %>%
@@ -122,6 +122,6 @@ plot(new_rast_mean, main = "maximum harvest area")
 crs(new_rast_mean) <- "epsg:3035"
 
 # save
-terra::writeRaster(new_rast_mean, paste0(path, "/mgmt_module/mean_harvest_100km.tif"), overwrite = T, datatype = "FLT4S")
+terra::writeRaster(new_rast_mean, paste0(path, "/04_disturbance_modules/mgmt_module/mean_harvest_100km.tif"), overwrite = T, datatype = "FLT4S")
 
 

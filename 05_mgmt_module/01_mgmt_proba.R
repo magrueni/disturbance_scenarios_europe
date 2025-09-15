@@ -28,7 +28,7 @@ path <- "/.../"
 
 
 # load state lookup
-dnn_lookup <- read.csv(paste0(path, "/dnn/dnn_states_lookup.csv")) 
+dnn_lookup <- read.csv(paste0(path, "/02_dnn/dnn_states_lookup.csv")) 
 
 # we put an height increment threshold of 0.5 % of the height. 
 states <- dnn_lookup %>% 
@@ -55,5 +55,5 @@ plot(states$height, states$heightIncrementThreshold)
 
 states <- states %>% 
   dplyr::select(stateID, heightIncrementThreshold, pManagement)
-write.csv(states, paste0(path, "/mgmt_module/management.csv"), row.names = F)
+write.csv(states, paste0(path, "/04_disturbance_modules/mgmt_module/management.csv"), row.names = F)
 

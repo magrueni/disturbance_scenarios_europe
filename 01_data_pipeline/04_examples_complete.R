@@ -23,9 +23,9 @@ res_path <- "/.../"
 
 
 ### functions ---
-x_rast <- rast("/reference_grids/reference_grid.tif")
+x_rast <- rast("/07_reference_grids/reference_grid.tif")
 crs(x_rast) <- "+proj=longlat +datum=WGS84 +no_defs"
-ref_tab <- read.csv("/reference_grids/reference_grid_tab.csv")
+ref_tab <- read.csv("/07reference_grids/reference_grid_tab.csv")
 
 get_point_id <- function(x){
   
@@ -57,8 +57,8 @@ samples <- dbReadTable(simulation_db, "examples_2m")
 head(samples)
 
 # example dataset
-metadata <- read_csv(paste0(path_expl, "/data_pipeline/metadata_processed_expl.csv"))
-samples <- read_csv(paste0(path_expl, "/data_pipeline/examples_expl.csv"))
+metadata <- read_csv(paste0(path_expl, "/01_simulation_data_pipeline/metadata_processed_expl.csv"))
+samples <- read_csv(paste0(path_expl, "/01_simulation_data_pipeline/examples_expl.csv"))
 
 
 # get the climate grid ids of all coordinates in the metadata
@@ -139,7 +139,7 @@ tables_con <- dbListTables(simulation_db)
 metadata <- dbReadTable(simulation_db, "metadata_with_fitting_scenario")
 
 # example datasets
-# metadata <- read_csv(paste0(path, "/data_pipeline/metadata_processed_expl.csv"))
+# metadata <- read_csv(paste0(path, "/01_simulation_data_pipeline/metadata_processed_expl.csv"))
 
 
 # functions -------------------------------------------------------
@@ -542,7 +542,7 @@ dim(lookup_new)
 
 # write out
 dbWriteTable(conn = simulation_db, name = "states_lookup_pruned", value = lookup_new, overwrite = T)
-write_csv(lookup_new, paste0(path, "/data_pipeline/states_lookup_pruned.csv"))
+write_csv(lookup_new, paste0(path, "/01_simulation_data_pipeline/states_lookup_pruned.csv"))
 
 
 # count how many examples ----
@@ -579,7 +579,7 @@ lookup_new_init_ls <- lookup_new_ls %>%
 
 
 dbWriteTable(conn = simulation_db, name = "states_lookup_pruned_init_ls", value = lookup_new_init_ls, overwrite = T)
-write_csv(lookup_new_init_ls, paste0(path, "/data_pipeline/states_lookup_pruned_init_ls.csv"))
+write_csv(lookup_new_init_ls, paste0(path, "/01_simulation_data_pipeline/states_lookup_pruned_init_ls.csv"))
 
 
 dbDisconnect(simulation_db)

@@ -45,17 +45,17 @@ library(stringr)
 
 # define path
 path <- "/.../"
-path_results <- paste0(path, "/svd_simulations/results_eu/")
+path_results <- paste0(path, "/09_svd_simulations/processed_data/")
 
 # load masks and hexagons
-eu_shp <- vect(paste0(path,"/reference_grids/eu_mask.shp"))
-hex_ecu <- shapefile(paste0(path, "/reference_grids/eu_mask_hexagons_25km.shp"))
+eu_shp <- vect(paste0(path,"/07_reference_grids/eu_mask.shp"))
+hex_ecu <- shapefile(paste0(path, "/07_reference_grids/eu_mask_hexagons_25km.shp"))
 
 sf_obj_forest_mask <- read_sf(paste0(path, "/reference_grids/hex_forest_mask_25km.gpkg"))
 sf_obj_forest_mask_ids <- sf_obj_forest_mask %>% st_drop_geometry()
 
 
-master_tab <- read.csv(paste0(path, "/svd_simulations/svd_simulations_ids.csv"), sep = ";")
+master_tab <- read.csv(paste0(path, "/09_svd_simulations/svd_simulations_ids.csv"), sep = ";")
 
 
 ### list all spatial outputs --- 

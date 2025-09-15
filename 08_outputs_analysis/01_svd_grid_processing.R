@@ -37,11 +37,11 @@ library(terra)
 
 ### settings ---------------------------------------------------------------
 path <- "/.../"
-path_sim <- paste0(path, "/svd_simulations/raw/")
-path_out <- paste0(path, "/svd_simulations/results_eu/")
+path_sim <- paste0(path, "/svd_simulations/")
+path_out <- paste0(path, "/09_svd_simulations/raw/")
 
 # simulation overview
-master_tab <- read.csv(paste0(path, "/svd_simulations/svd_simulations_ids.csv"), sep = ";")
+master_tab <- read.csv(paste0(path, "/09_svd_simulations/svd_simulations_ids.csv"), sep = ";")
 
 
 ### start processing ----------------------------------------------------------

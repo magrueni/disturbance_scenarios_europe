@@ -386,7 +386,7 @@ for(i in 1:nrow(bbox)){
   
   
   # save raster
-  terra::writeRaster(x = result_raster, filename = paste0(path, "/initial_states/vegetation/species_stack_", name, ".tif"), overwrite = T)
+  terra::writeRaster(x = result_raster, filename = paste0(path, "/03_initial_forest_states/vegetation/species_stack_", name, ".tif"), overwrite = T)
   gc()
   
   

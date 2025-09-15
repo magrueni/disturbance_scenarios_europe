@@ -10,7 +10,7 @@
 #   - outputs from script 3 disturbance rates at hexagon level
 #
 # Output:
-#   - Figure 2b, Figure S2 - S10
+#   - Figure 2b, Figure S5 - S15
 # ------------------------------------------------------------------------------
 
 
@@ -25,6 +25,7 @@ library(raster)
 library(ggplot2)
 library(sf)
 library(terra)
+library(raster)
 library(stringr)
 library(readr)
 library(sfheaders)
@@ -37,20 +38,20 @@ library(tidyverse)
 
 # define path
 path <- "/.../"
-path_results <- paste0(path, "/svd_simulations/results_eu/")
+path_results <- paste0(path, "/09_svd_simulations/processed_data/")
 
 # load shp and hexagon
-eu_shp <- vect(paste0(path, "/reference_grids/eu_mask.shp"))
-hex_ecu <- shapefile(paste0(path, "/reference_grids/eu_mask_hexagons_25km.shp"))
+eu_shp <- vect(paste0(path, "/07_reference_grids/eu_mask.shp"))
+hex_ecu <- shapefile(paste0(path, "/07_reference_grids/eu_mask_hexagons_25km.shp"))
 
 
 # load forest mask
-sf_obj_forest_mask <- read_sf(paste0(path, "/reference_grids/hex_forest_mask_25km.gpkg"))
+sf_obj_forest_mask <- read_sf(paste0(path, "/07_reference_grids/hex_forest_mask_25km.gpkg"))
 sf_obj_forest_mask_ids <- sf_obj_forest_mask %>% st_drop_geometry()
 
 
 # load simulation overview to assign sims to rcps
-master_tab <- read.csv(paste0(path, "/svd_simulations/svd_simulations_ids.csv"), sep = ";")
+master_tab <- read.csv(paste0(path, "/09_svd_simulations/svd_simulations_ids.csv"), sep = ";")
 
 
 # define rcps
@@ -178,8 +179,8 @@ DistMap <- ggplot() +
   xlab("") + ylab("")
 
 DistMap
-ggsave(DistMap, filename = paste0(path_results, "/figures/Fig2b.png"), width = 12, height = 9)
-write_csv(dat_85_all_plot_mean, paste0(path_results, "/figures/plot_data/figure2b_data_rcp85.csv"))
+ggsave(DistMap, filename = paste0(path, "/11_figures/Fig2b.pdf"), width = 12, height = 9)
+write_csv(dat_85_all_plot_mean, paste0(path, "/11_figures/figure_data/Fig2b.csv"))
 
 
 # then the delta ------------
@@ -234,8 +235,8 @@ DistMap <- ggplot() +
   xlab("") + ylab("")
 
 DistMap
-ggsave(DistMap, filename = paste0(path_results, "/figures/FigS4.png"), width = 12, height = 9)
-write_csv(dat_85_all_plot_mean, paste0(path_results, "/figures/plot_data/figS4_data_map.csv"))
+ggsave(DistMap, filename = paste0(path, "/11_figures/FigS7.png"), width = 12, height = 9)
+write_csv(dat_85_all_plot_mean, paste0(path, "/11_figures/figure_data/FigS7_data_map.csv"))
 
 
 
@@ -307,8 +308,8 @@ DistMap <- ggplot() +
   xlab("") + ylab("")
 
 DistMap
-ggsave(DistMap, filename = paste0(path_results, "/figures/FigS2.png"), width = 12, height = 9)
-write_csv(dat_45_all_plot_mean, paste0(path_results, "/figures/plot_data/figS2_data_map.csv"))
+ggsave(DistMap, filename = paste0(path, "/11_figures/FigS5.png"), width = 12, height = 9)
+write_csv(dat_45_all_plot_mean, paste0(path, "/11_figures/figure_data/FigS5_data_map.csv"))
 
 
 
@@ -360,8 +361,8 @@ DistMap <- ggplot() +
   xlab("") + ylab("")
 
 DistMap
-ggsave(DistMap, filename = paste0(path_results, "/figures/FigS5.png"), width = 12, height = 9)
-write_csv(dat_45_all_plot_mean, paste0(path_results, "/figures/plot_data/figS5_data_map.csv"))
+ggsave(DistMap, filename = paste0(path, "/11_figures/FigS8.png"), width = 12, height = 9)
+write_csv(dat_45_all_plot_mean, paste0(path, "/11_figures/figure_data/FigS8_data_map.csv"))
 
 
 
@@ -434,8 +435,8 @@ DistMap <- ggplot() +
   xlab("") + ylab("")
 
 DistMap
-ggsave(DistMap, filename = paste0(path_results, "/figures/FigS3.png"), width = 12, height = 9)
-write_csv(dat_26_all_plot_mean, paste0(path_results, "/figures/plot_data/figS3_data_map.csv"))
+ggsave(DistMap, filename = paste0(path, "/11_figures/FigS6.png"), width = 12, height = 9)
+write_csv(dat_26_all_plot_mean, paste0(path, "/11_figures/figure_data/FigS6_data_map.csv"))
 
 
 
@@ -487,16 +488,16 @@ DistMap <- ggplot() +
   xlab("") + ylab("")
 
 DistMap
-ggsave(DistMap, filename = paste0(path_results, "/figures/FigS6.png"), width = 12, height = 9)
-write_csv(dat_26_all_plot_mean, paste0(path_results, "/figures/plot_data/figuS6_data_map.csv"))
+ggsave(DistMap, filename = paste0(path, "/11_figures/FigS9.png"), width = 12, height = 9)
+write_csv(dat_26_all_plot_mean, paste0(path, "/11_figures/figure_data/FigS9_data_map.csv"))
 
 
 
 ### maps for the agents --------------------------------------------------------
 
 
-# fire
-cols <- brewer.pal(9, "YlOrBr")
+## fire
+cols <- (met.brewer("OKeeffe2", 100, "continuous"))
 
 # filter the data
 dat_85 <- all_dat %>% filter(rcp == "rcp85") %>% filter(agent == "firegrid")
@@ -533,10 +534,7 @@ dat_85_all_plot <- dat_85_all %>%
             land_area = mean(land_area, na.rm = T),
             forest_area = mean(forest_area, na.rm = T)) %>% 
   mutate(forestShare = (1/land_area * forest_area)) %>% 
-  mutate(mean_dist_rate = ifelse(forestShare < 0.1, 0, mean_dist_rate)) %>% 
   mutate(mean_dist_rate = ifelse(mean_dist_rate > pct, pct, mean_dist_rate))
-
-
 
 centroids <- st_centroid(dat_85_all_plot)
 centroid_coords <- st_coordinates(centroids)
@@ -570,14 +568,83 @@ DistMap <- ggplot() +
 DistMap
 
 print(pct)
-ggsave(DistMap, filename = paste0(path_results, "/figures/FigS7.png"), width = 12, height = 9)
-write_csv(dat_85_all_plot_mean, paste0(path_results, "/figures/plot_data/figS7_data_map.csv"))
+ggsave(DistMap, filename = paste0(path, "/11_figures/FigS10.png"), width = 12, height = 9)
+write_csv(dat_85_all_plot_mean, paste0(path, "/11_figures/figure_data/FigS10_data_map.csv"))
+
+## fire SD
+
+# prepare data and calculate dist rate per hexagon
+dat_85_all <- dat_85 %>% 
+  group_by(gridid, year, sim) %>% 
+  summarise(dist_area = sum(dist_area, na.rm = T)) %>% 
+  ungroup() %>% 
+  left_join(., sf_obj_forest_mask, by = "gridid") %>% 
+  mutate(dist_rate = as.numeric(100 / forest_area * dist_area / 10),
+         dist_freq = as.numeric(10 * forest_area / dist_area)) %>% 
+  group_by(gridid, sim) %>% 
+  summarize(mean_dist_rate = mean(dist_rate, na.rm = T),
+            mean_dist_freq = mean(dist_freq, na.rm = T),
+            n = n()) %>% 
+  ungroup() %>% 
+  left_join(., sf_obj_forest_mask, by = "gridid") %>%
+  st_as_sf(.)
+
+
+## then the mean across the whole period
+dat_85_all_plot <- dat_85_all %>%
+  mutate(mean_dist_rate = ifelse(is.nan(mean_dist_rate), NA, mean_dist_rate), 
+         mean_dist_freq = ifelse(is.nan(mean_dist_freq), NA, mean_dist_freq)) %>% 
+  group_by(gridid) %>% 
+  summarize(sd_dist_rate = sd(mean_dist_rate, na.rm = T),
+            mean_dist_rate = mean(mean_dist_rate, na.rm = T),
+            land_area = mean(land_area, na.rm = T),
+            forest_area = mean(forest_area, na.rm = T)) %>% 
+  mutate(forestShare = (1/land_area * forest_area)) %>% 
+  mutate(mean_dist_rate = ifelse(mean_dist_rate > pct, pct, mean_dist_rate),
+         sd_dist_rate = ifelse(sd_dist_rate > 0.5, 0.5, sd_dist_rate))
+
+
+
+centroids <- st_centroid(dat_85_all_plot)
+centroid_coords <- st_coordinates(centroids)
+
+# Add the centroid coordinates to the original data frame
+sf_with_centroids <- dat_85_all_plot %>%
+  mutate(
+    x = centroid_coords[, 1],  # X coordinate of centroid
+    y = centroid_coords[, 2]   # Y coordinate of centroid
+  )
+
+dat_85_all_plot_mean <- sf_with_centroids
+
+pct <- round(as.numeric(quantile(dat_85_all_plot_mean$sd_dist_rate, 0.9, na.rm = T)), 2)
+SdMap <- ggplot() +
+  geom_point(data=dat_85_all_plot_mean,
+             aes(x=x, y=y, color=sd_dist_rate), size=0)+
+  geom_point(data=dat_85_all_plot_mean,
+             aes(x=x, y=y, color=sd_dist_rate, size=forestShare), show.legend = TRUE)+
+  geom_spatvector(data = eu_shp, fill = "black", col = "black", alpha = 0.1) +
+  geom_spatvector(data = europe, fill = "transparent", col = "black") +
+  theme_classic() +
+  scale_size_continuous(range = c(-0.5, 1.5)) + 
+  scale_color_gradientn(colours = cols, na.value = "lightgrey", limits = c(0, 0.5), breaks = c(0, 0.5)) +
+  labs(color = bquote(" SD disturbance \n rate [% yr"^-1*"]"),        size = bquote("forest share")) + # Change color legend title here
+  theme(axis.text = element_text(size = 12),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12, vjust = 3),
+        legend.position = "right") +
+  xlab("") + ylab("")
+
+SdMap
+
+
+ggsave(SdMap, filename = paste0(path, "/11_figures/FigS13.png"), width = 12, height = 9)
+write_csv(dat_85_all_plot_mean, paste0(path, "/11_figures/figure_data/FigS13_map_SD_fire.csv"))
 
 
 
 
-# wind
-cols <- brewer.pal(9, "BuPu")
+## wind
 
 # filter the data
 dat_85 <- all_dat %>% filter(rcp == "rcp85") %>% filter(agent == "wind")
@@ -614,9 +681,7 @@ dat_85_all_plot <- dat_85_all %>%
             land_area = mean(land_area, na.rm = T),
             forest_area = mean(forest_area, na.rm = T)) %>% 
   mutate(forestShare = (1/land_area * forest_area)) %>% 
-  mutate(mean_dist_rate = ifelse(forestShare < 0.1, 0, mean_dist_rate)) %>% 
   mutate(mean_dist_rate = ifelse(mean_dist_rate > pct, pct, mean_dist_rate))
-
 
 
 centroids <- st_centroid(dat_85_all_plot)
@@ -650,14 +715,85 @@ DistMap <- ggplot() +
 
 DistMap
 
-ggsave(DistMap, filename = paste0(path_results, "/figures/FigS8.png"), width = 12, height = 9)
-write_csv(dat_85_all_plot_mean, paste0(path_results, "/figures/plot_data/figS8_data_map.csv"))
+ggsave(DistMap, filename = paste0(path, "/11_figures/FigS12.png"), width = 12, height = 9)
+write_csv(dat_85_all_plot_mean, paste0(path, "/11_figures/figure_data/figS12_data_map.csv"))
+
+
+
+## wind SD
+
+# prepare data and calculate dist rate per hexagon
+dat_85_all <- dat_85 %>% 
+  group_by(gridid, year, sim) %>% 
+  summarise(dist_area = sum(dist_area, na.rm = T)) %>% 
+  ungroup() %>% 
+  left_join(., sf_obj_forest_mask, by = "gridid") %>% 
+  mutate(dist_rate = as.numeric(100 / forest_area * dist_area / 10),
+         dist_freq = as.numeric(10 * forest_area / dist_area)) %>% 
+  group_by(gridid, sim) %>% 
+  summarize(mean_dist_rate = mean(dist_rate, na.rm = T),
+            mean_dist_freq = mean(dist_freq, na.rm = T),
+            n = n()) %>% 
+  ungroup() %>% 
+  left_join(., sf_obj_forest_mask, by = "gridid") %>%
+  st_as_sf(.)
+
+
+## then the mean across the whole period
+dat_85_all_plot <- dat_85_all %>%
+  mutate(mean_dist_rate = ifelse(is.nan(mean_dist_rate), NA, mean_dist_rate), 
+         mean_dist_freq = ifelse(is.nan(mean_dist_freq), NA, mean_dist_freq)) %>% 
+  group_by(gridid) %>% 
+  summarize(sd_dist_rate = sd(mean_dist_rate, na.rm = T),
+            mean_dist_rate = mean(mean_dist_rate, na.rm = T),
+            land_area = mean(land_area, na.rm = T),
+            forest_area = mean(forest_area, na.rm = T)) %>% 
+  mutate(forestShare = (1/land_area * forest_area)) %>% 
+  mutate(mean_dist_rate = ifelse(mean_dist_rate > pct, pct, mean_dist_rate),
+         sd_dist_rate = ifelse(sd_dist_rate > 0.5, 0.5, sd_dist_rate))
+
+
+
+centroids <- st_centroid(dat_85_all_plot)
+centroid_coords <- st_coordinates(centroids)
+
+# Add the centroid coordinates to the original data frame
+sf_with_centroids <- dat_85_all_plot %>%
+  mutate(
+    x = centroid_coords[, 1],  # X coordinate of centroid
+    y = centroid_coords[, 2]   # Y coordinate of centroid
+  )
+
+dat_85_all_plot_mean <- sf_with_centroids
+
+
+SdMap <- ggplot() +
+  geom_point(data=dat_85_all_plot_mean,
+             aes(x=x, y=y, color=sd_dist_rate), size=0)+
+  geom_point(data=dat_85_all_plot_mean,
+             aes(x=x, y=y, color=sd_dist_rate, size=forestShare), show.legend = TRUE)+
+  geom_spatvector(data = eu_shp, fill = "black", col = "black", alpha = 0.1) +
+  geom_spatvector(data = europe, fill = "transparent", col = "black") +
+  theme_classic() +
+  scale_size_continuous(range = c(-0.5, 1.5)) + 
+  scale_color_gradientn(colours = cols, na.value = "lightgrey", limits = c(0, 0.5), breaks = c(0, 0.5)) +
+  labs(color = bquote("SD disturbance \n rate [% yr"^-1*"]"),        size = bquote("forest share")) + # Change color legend title here
+  theme(axis.text = element_text(size = 12),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12, vjust = 3),
+        legend.position = "right") +
+  xlab("") + ylab("")
+
+SdMap
+
+ggsave(SdMap, filename = paste0(path, "/11_figures/FigS15.png"), width = 12, height = 9)
+write_csv(dat_85_all_plot_mean, paste0(path, "/11_figures/figure_data/figS15_sd_map_wind.csv"))
 
 
 
 
-# bark beetle
-cols <- brewer.pal(9, "YlGn")
+
+## bark beetle
 
 # filter the data
 dat_85 <- all_dat %>% filter(rcp == "rcp85") %>% filter(agent == "bbgrid")
@@ -693,7 +829,6 @@ dat_85_all_plot <- dat_85_all %>%
             land_area = mean(land_area, na.rm = T),
             forest_area = mean(forest_area, na.rm = T)) %>% 
   mutate(forestShare = (1/land_area * forest_area)) %>% 
-  mutate(mean_dist_rate = ifelse(forestShare < 0.1, 0, mean_dist_rate)) %>% 
   mutate(mean_dist_rate = ifelse(mean_dist_rate > pct, pct, mean_dist_rate))
 
 
@@ -729,8 +864,66 @@ DistMap <- ggplot() +
 
 DistMap
 
-ggsave(DistMap, filename = paste0(path_results, "/figures/FigS9.png"), width = 12, height = 9)
-write_csv(dat_85_all_plot_mean, paste0(path_results, "/figures/plot_data/figS9_data_map.csv"))
+ggsave(DistMap, filename = paste0(path, "/11_figures/FigS11.png"), width = 12, height = 9)
+write_csv(dat_85_all_plot_mean, paste0(path, "/11_figures/figure_data/figS11_data_map.csv"))
+
+
+## bark beetle SD
+
+# prepare data and calculate dist rate per hexagon
+dat_85_all <- dat_85 %>% 
+  group_by(gridid, year, sim) %>% 
+  summarise(dist_area = sum(dist_area, na.rm = T)) %>% 
+  ungroup() %>% 
+  left_join(., sf_obj_forest_mask, by = "gridid") %>% 
+  mutate(dist_rate = as.numeric(100 / forest_area * dist_area / 10),
+         dist_freq = as.numeric(10 * forest_area / dist_area)) %>% 
+  group_by(gridid, sim) %>% 
+  summarize(mean_dist_rate = mean(dist_rate, na.rm = T),
+            mean_dist_freq = mean(dist_freq, na.rm = T),
+            n = n()) %>% 
+  ungroup() %>% 
+  left_join(., sf_obj_forest_mask, by = "gridid") %>%
+  st_as_sf(.)
+
+
+## then the mean across the whole period
+dat_85_all_plot <- dat_85_all %>%
+  mutate(mean_dist_rate = ifelse(is.nan(mean_dist_rate), NA, mean_dist_rate), 
+         mean_dist_freq = ifelse(is.nan(mean_dist_freq), NA, mean_dist_freq)) %>% 
+  group_by(gridid) %>% 
+  summarize(sd_dist_rate = sd(mean_dist_rate, na.rm = T),
+            mean_dist_rate = mean(mean_dist_rate, na.rm = T),
+            land_area = mean(land_area, na.rm = T),
+            forest_area = mean(forest_area, na.rm = T)) %>% 
+  mutate(forestShare = (1/land_area * forest_area)) %>% 
+  mutate(mean_dist_rate = ifelse(mean_dist_rate > pct, pct, mean_dist_rate),
+         sd_dist_rate = ifelse(sd_dist_rate > 0.25, 0.25, sd_dist_rate))
+
+
+
+SdMap <- ggplot() +
+  geom_point(data=dat_85_all_plot_mean,
+             aes(x=x, y=y, color=sd_dist_rate), size=0)+
+  geom_point(data=dat_85_all_plot_mean,
+             aes(x=x, y=y, color=sd_dist_rate, size=forestShare), show.legend = TRUE)+
+  geom_spatvector(data = eu_shp, fill = "black", col = "black", alpha = 0.1) +
+  geom_spatvector(data = europe, fill = "transparent", col = "black") +
+  theme_classic() +
+  scale_size_continuous(range = c(-0.5, 1.5)) + 
+  scale_color_gradientn(colours = cols, na.value = "lightgrey", limits = c(0, 0.25), breaks = c(0, 0.25)) +
+  labs(color = bquote("SD disturbance \n rate [% yr"^-1*"]"),        size = bquote("forest share")) + # Change color legend title here
+  theme(axis.text = element_text(size = 12),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12, vjust = 3),
+        legend.position = "right") +
+  xlab("") + ylab("")
+
+SdMap
+
+ggsave(SdMap, filename = paste0(path, "/11_figures/FigS14.png"), width = 12, height = 9)
+write_csv(dat_85_all_plot_mean, paste0(path, "/11_figures/figure_data/FigS14_sd_map_bbtl.csv"))
+
 
 
 ### end ------------------------------------------------------------------------

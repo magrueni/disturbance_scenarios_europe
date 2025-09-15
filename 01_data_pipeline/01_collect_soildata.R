@@ -53,8 +53,8 @@ proj_longlat <- "+proj=longlat +datum=WGS84 +no_defs"
 proj_forest <- "+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs"
 
 # Load European boundary shapefiles
-eu_poly <- vect(paste0(public_pth, "/gis/europe.shp"))
-eu_poly_lr <- vect(paste0(public_pth, "/gis/europe_lowres.shp"))
+eu_poly <- vect(paste0(public_pth, "/06_06_gis/europe.shp"))
+eu_poly_lr <- vect(paste0(public_pth, "/06_06_gis/europe_lowres.shp"))
 
 
 
@@ -65,7 +65,7 @@ eu_poly_lr <- vect(paste0(public_pth, "/gis/europe_lowres.shp"))
 # https://esdac.jrc.ec.europa.eu/content/european-soil-database-derived-data
 
 # Soil depth data
-depth <- rast(paste0(public_pth, "/gis/STU/STU_EU_DEPTH_ROOTS.rst"))
+depth <- rast(paste0(public_pth, "/06_gis/STU/STU_EU_DEPTH_ROOTS.rst"))
 crs(depth) <- proj_forest
 depth <- depth %>% 
   terra::project(proj_forest) %>% 
@@ -76,7 +76,7 @@ depth <- depth * 10 # Convert to mm
 
 # Texture (clay, silt, sand)
 load_texture <- function(layer_name) {
-  layer <- rast(paste0(public_pth, "/gis/STU/", layer_name))
+  layer <- rast(paste0(public_pth, "/06_gis/STU/", layer_name))
   crs(layer) <- proj_forest
   layer <- layer %>% 
     terra::project(proj_forest) %>% 
@@ -91,8 +91,8 @@ silt_wgs <- load_texture("STU_EU_T_SILT.rst")
 sand_wgs <- load_texture("STU_EU_T_SAND.rst")
 
 # Water Holding Capacity (WHC)
-twhc_s <- rast(paste0(public_pth, "/gis/STU/STU_EU_S_TAWC.rst"))
-twhc_t <- rast(paste0(public_pth, "/gis/STU/STU_EU_T_TAWC.rst"))
+twhc_s <- rast(paste0(public_pth, "/06_gis/STU/STU_EU_S_TAWC.rst"))
+twhc_t <- rast(paste0(public_pth, "/06_gis/STU/STU_EU_T_TAWC.rst"))
 whc <- twhc_s + twhc_t
 
 crs(whc) <- proj_forest
@@ -103,14 +103,14 @@ whc <- whc %>%
 whc[whc == 0] <- NA
 
 # Texture catergory layer
-r_texture <- rast(paste0(public_pth, "/gis/texture_categories.tif"))
+r_texture <- rast(paste0(public_pth, "/06_gis/texture_categories.tif"))
 crs(r_texture) <- proj_forest
 r_texture <- terra::project(r_texture, proj_forest, method = "mode")
 r_texture[r_texture == 0] <- NA
 r_texture <- terra::as.factor(r_texture)
 
 # Nitrogen availability
-nitro <- rast(paste0(public_pth, "/gis/predicted_N_available_1km_v2_interpolated.tif"))
+nitro <- rast(paste0(public_pth, "/06_gis/predicted_N_available_1km_v2_interpolated.tif"))
 nitro <- nitro %>% 
   terra::project(proj_longlat) %>% 
   terra::mask(eu_poly_lr)

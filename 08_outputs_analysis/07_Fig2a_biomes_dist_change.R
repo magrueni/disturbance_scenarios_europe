@@ -37,23 +37,23 @@ library(readr)
 
 # define path
 path <- "/.../"
-path_results <- paste0(path, "/04_work/svd_simulations/results_eu/")
+path_results <- paste0(path, "/10_results/")
                        
 
 ### load data ------------------------------------------------------------------
 
 # load shp and hexagon
-eu_shp <- vect(paste0(path, "/reference_grids/eu_mask.shp"))
-hex_ecu <- shapefile(paste0(path, "/reference_grids/eu_mask_hexagons_25km.shp"))
+eu_shp <- vect(paste0(path, "/07_reference_grids/eu_mask.shp"))
+hex_ecu <- shapefile(paste0(path, "/07_reference_grids/eu_mask_hexagons_25km.shp"))
 
 
 # load forest mask
-sf_obj_forest_mask <- read_sf(paste0(path, "/reference_grids/hex_forest_mask_25km.gpkg"))
+sf_obj_forest_mask <- read_sf(paste0(path, "/07_reference_grids/hex_forest_mask_25km.gpkg"))
 sf_obj_forest_mask_ids <- sf_obj_forest_mask %>% st_drop_geometry()
 
 
 # load simulation overview to assign sims to rcps
-master_tab <- read.csv(paste0(path, "/svd_simulations/svd_simulations_ids.csv"), sep = ";")
+master_tab <- read.csv(paste0(path, "/09_svd_simulations/svd_simulations_ids.csv"), sep = ";")
 
 
 # define rcps
@@ -76,7 +76,7 @@ for(c in 1:length(rcps)){
     
     r <- r + 1
     
-    dat <- read_csv(paste0(path_results, "/dist_rates_25km/all_dist_rates_", y, "_", rcps[c], ".csv"))
+    dat <- read_csv(paste0(path, "/09_svd_simulations/processed_data//dist_rates_25km/all_dist_rates_", y, "_", rcps[c], ".csv"))
     
     all_maps_dat[[r]] <- dat 
     
@@ -87,7 +87,7 @@ for(c in 1:length(rcps)){
 
 # combine outputs
 all_dat <- do.call(rbind, all_maps_dat)  
-write_csv(all_dat, paste0(path, "/figures/plot_data/biomes_data_all.csv"))
+write_csv(all_dat, paste0(path, "/11_figures/figure_data/biomes_data_all.csv"))
 
 
 # get the size of one hexagon
@@ -110,15 +110,15 @@ hex_ecu <- shapefile(paste0(path, "/reference_grids/eu_mask_hexagons_25km.shp"))
 # eu_shp <- vect(eu_shp)
 
 # load forest mask
-sf_obj_forest_mask <- st_read(paste0(path, "/reference_grids/hex_forest_mask_25km.gpkg"))
+sf_obj_forest_mask <- st_read(paste0(path, "/07_reference_grids/hex_forest_mask_25km.gpkg"))
 
 # load biomes
-ecoregions <- st_read(paste0(path, "/gis/ecoregions/terrestrial_ecoregions_olson.shp"))
+ecoregions <- st_read(paste0(path, "/06_gis/ecoregions/terrestrial_ecoregions_olson.shp"))
 ecoregions <- st_transform(ecoregions, proj_leae)
 ecoregions <- vect(ecoregions)
 
 # convert to raster
-forest_mask_for_biomes <- rast(paste0(path, "/gis/forest_mask_new_laea_masked_nas.tif"))
+forest_mask_for_biomes <- rast(paste0(path, "/06_gis/forest_mask_new_laea_masked_nas.tif"))
 forest_mask_agg <- terra::aggregate(forest_mask_for_biomes, fact = 10)
 ecoreg_rast <- rasterize(ecoregions, forest_mask_agg, field = "BIOME")
 reclass_matrix <- cbind(c(12, 5, 6, 11, 4, 8), # old values
@@ -131,11 +131,11 @@ ecoreg_rast_masked <- terra::mask(discrete_raster, europe)
 # plot ecoregions
 cols <- c(met.brewer("Isfahan1", 5), "lightgrey")
 plot(ecoreg_rast_masked, col = cols, box = F, axes = F, legend = F)
-dev.print(png, filename = paste0(path, "/figures/biomes_map.png"), width = 1500, height = 1500, res = 300)
+dev.print(png, filename = paste0(path, "/11_figures/biomes_map.png"), width = 1500, height = 1500, res = 300)
 
 
 # assign biome to each hexagon
-hex_ecu <- shapefile(paste0(path, "/reference_grids/eu_mask_hexagons_25km.shp"))
+hex_ecu <- shapefile(paste0(path, "/07_reference_grids/eu_mask_hexagons_25km.shp"))
 hex_ecoreg <- exactextractr::exact_extract(ecoreg_rast, hex_ecu, fun = "mode")
 hex_ecoreg <- cbind(sf_obj_forest_mask, hex_ecoreg)
 hex_ecoreg <- hex_ecoreg %>% dplyr::select(gridid, biome = hex_ecoreg)
@@ -253,10 +253,10 @@ boxplot1 <- ggplot(diff_df_plot,
 boxplot1
 
 ggsave(boxplot1,
-       filename = paste0(path, "/figures/Fig2a.png"),
+       filename = paste0(path, "/11_figures/Fig2a.pdf"),
        width = 7, height = 8)
 
-write_csv(diff_df_plot, paste0(path, "/figures/plot_data/figure_data/fig2a_biomes.csv"))
+write_csv(diff_df_plot, paste0(path, "/11_figures/figure_data/Fig2a_biomes.csv"))
 
 
 

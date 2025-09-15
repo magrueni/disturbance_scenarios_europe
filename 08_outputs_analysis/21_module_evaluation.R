@@ -10,7 +10,7 @@
 #
 # Output:
 #   - Figures and statistics to evaluate the disturbance modules 
-#   - Figures S20 - S24
+#   - Figures S30 - S34
 #
 # Notes:
 # - underlying disturbance data can be obtained here: https://zenodo.org/records/4607230
@@ -193,7 +193,7 @@ a_mgmt <- a %>%
 
 ### now load simulation data ---------------------------------------------------
 
-path_sims <- paste0(path, "/svd_simulations/raw/")
+path_sims <- paste0(path, "/09_svd_simulations/raw/")
 
 
 ### fire ---
@@ -240,7 +240,7 @@ fire_dat_plot_hist <- fire_dat_plot_hist %>%
   mutate(period = ifelse(period != "1981-2010", "1986-2020", "1981-2010"))
 
 # save results
-write_csv(wind_dat_plot_hist, paste0(path, "/figures/plot_data/figS21_fire_eval.csv"))
+write_csv(wind_dat_plot_hist, paste0(path, "/11_figures/figure_data/figS31_fire_eval.csv"))
 
 
 # Create a density plot for burned area grouped by sim, colored and filled by scen
@@ -269,7 +269,7 @@ p2_fire <- ggplot(fire_dat_plot_hist, aes(x = as.factor(period), y = (dist_area)
 
 
 p2_fire
-ggsave(p2_fire, filename = paste0(path_results, "/figures/FigS21_fire.png"), width = 8, height = 6)
+ggsave(p2_fire, filename = paste0(path_results, "/11_figures/FigS31_fire.png"), width = 8, height = 6)
 
 # numbers
 dat_real <- subset(fire_dat_plot_hist, period != "1981-2010")
@@ -343,7 +343,7 @@ mean(test$dist_area, na.rm = T)
 
 wind_dat_plot_hist %>% group_by(period, scen) %>% 
   summarize(mean = mean(dist_area, na.rm = T))
-write_csv(wind_dat_plot_hist, paste0(path, "/figures/plot_data/figS22_wind_eval.csv"))
+write_csv(wind_dat_plot_hist, paste0(path, "/11_figures/figure_data/figS32_wind_eval.csv"))
 
 
 # Create a density plot for burned area grouped by sim, colored and filled by scen
@@ -372,7 +372,7 @@ p2_wind <- ggplot(wind_dat_plot_hist, aes(x = as.factor(period), y = (dist_area)
 
 
 p2_wind
-ggsave(p2_wind, filename = paste0(path_results, "/figures/FigS22_wind.png"), width = 8, height = 6)
+ggsave(p2_wind, filename = paste0(path_results, "/11_figures/FigS32_wind.png"), width = 8, height = 6)
 
 
 # numbers
@@ -450,7 +450,7 @@ bbtl_dat_plot_hist %>% group_by(period, scen) %>%
   summarize(mean = mean(dist_area, na.rm = T))
 
 
-write_csv(bbtl_dat_plot_hist, paste0(path, "/figures/plot_data/figS23_bbtl_results.csv"))
+write_csv(bbtl_dat_plot_hist, paste0(path, "/11_figures/figure_data/figS33_bbtl_results.csv"))
 
 
 
@@ -480,7 +480,7 @@ p2_bbtl <- ggplot(bbtl_dat_plot_hist, aes(x = as.factor(period), y = (dist_area)
   theme(text = element_text(size = 12))
 
 p2_bbtl
-ggsave(p2_bbtl, filename = paste0(path_results, "/figures/S23_bbtl.png"), width = 8, height = 6)
+ggsave(p2_bbtl, filename = paste0(path_results, "/11_figures/S33_bbtl.png"), width = 8, height = 6)
 
 # numbers
 dat_real <- subset(bbtl_dat_plot_hist, period == "1986-2000")
@@ -561,7 +561,7 @@ mgmt_dat_plot_hist %>% group_by(period, scen) %>%
   summarize(mean = mean(dist_area, na.rm = T))
 
 
-write_csv(bbtl_dat_plot_hist, paste0(path, "/figures/plot_data/figS24_bbtl_results.csv"))
+write_csv(bbtl_dat_plot_hist, paste0(path, "/11_figures/figure_data/figS34_bbtl_results.csv"))
 
 
 
@@ -591,7 +591,7 @@ p2_bbtl <- ggplot(mgmt_dat_plot_hist, aes(x = as.factor(scen), y = (dist_area), 
   theme(text = element_text(size = 12))
 
 p2_bbtl
-ggsave(p2_bbtl, filename = paste0(path_results, "/figures/FigS24_mgmt.png"), width = 8, height = 6)
+ggsave(p2_bbtl, filename = paste0(path_results, "/11_figures/FigS34_mgmt.png"), width = 8, height = 6)
 
 # numbers
 dat_real <- subset(mgmt_dat_plot_hist, period != "1981-2010")

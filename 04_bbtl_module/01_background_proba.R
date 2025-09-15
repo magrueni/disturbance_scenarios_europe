@@ -32,9 +32,9 @@ path <- "/.../"
 
 
 ### load data --------------------------------------------
-ref_grid_100km <- rast(paste0(path, "/reference_grids/reference_grid_100km.tif"))
-ref_grid_10km <- rast(paste0(path, "/reference_grids/reference_grid_10km.tif"))
-ref_grid_1km <- rast(paste0(path, "/reference_grids/reference_grid_1km.tif"))
+ref_grid_100km <- rast(paste0(path, "/07_reference_grids/reference_grid_100km.tif"))
+ref_grid_10km <- rast(paste0(path, "/07_reference_grids/reference_grid_10km.tif"))
+ref_grid_1km <- rast(paste0(path, "/07_reference_grids/reference_grid_1km.tif"))
 
 
 gridid <- ref_grid_100km

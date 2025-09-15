@@ -163,8 +163,8 @@ wrapper_fun <- cmpfun(wrapper_fun)
 ### load metadata --------------------------------------------------------------------------
 
 # example dataset
-metadata <- read_csv(paste0(path_expl, "/data_pipeline/metadata_processed_expl.csv"))
-samples <- read_csv(paste0(path_expl, "/data_pipeline/examples_expl.csv"))
+metadata <- read_csv(paste0(path_expl, "/01_simulation_data_pipeline/metadata_processed_expl.csv"))
+samples <- read_csv(paste0(path_expl, "/01_simulation_data_pipeline/examples_expl.csv"))
 
 
 ### order metadata so we can training_db bunch of climate data from spark -------------------
@@ -181,7 +181,7 @@ for(s in scenarios){
     
   
   # load clim bias correction file
-  bias_df <- read_csv(paste0(path_expl, "/data_pipeline/clim_bias_expl.csv"))
+  bias_df <- read_csv(paste0(path_expl, "/01_simulation_data_pipeline/clim_bias_expl.csv"))
   
     # subset the metadata by scenario
   meta_sub_scen <- metadata %>% collapse::fsubset(scenario == s)
@@ -220,7 +220,7 @@ for(s in scenarios){
   # gc()
   
   # get expl dataset instead
-  clim_tab <- read_csv(paste0(path_expl, "/data_pipeline/climate_expl.csv")) %>% 
+  clim_tab <- read_csv(paste0(path_expl, "/01_simulation_data_pipeline/climate_expl.csv")) %>% 
     setDT()
   
   # loop over unique IDs
@@ -230,7 +230,7 @@ for(s in scenarios){
       meta_sub_scen_user <- meta_sub_scen %>% collapse::fsubset(uniqueID == u)
       
       # load the table with the new timeseries
-      timeseries_focal_df <- read_csv(paste0(path_expl, "/data_pipeline/time_series.csv"))
+      timeseries_focal_df <- read_csv(paste0(path_expl, "/01_simulation_data_pipeline/time_series.csv"))
       
       # split to chunks if too large
       chnks <- split(c(1:nrow(meta_sub_scen_user)),
@@ -265,7 +265,7 @@ for(s in scenarios){
         # dbDisconnect(simulation_db)
         
         # expl dataset instead
-        simdata <- read_csv(paste0(path_expl, "/data_pipeline/simdata_expl.csv")) %>% 
+        simdata <- read_csv(paste0(path_expl, "/01_simulation_data_pipeline/simdata_expl.csv")) %>% 
           setDT()
         
         

@@ -40,16 +40,17 @@ library(MetBrewer)
 
 ### settings ---------------------------------------------------------------------
 path <- "/.../"
-path_sims <- paste0(path, "/svd_simulations/raw/")
-path_results <-  paste0(path, "/svd_simulations/results_eu/")
+path_sims <- paste0(path, "/09_svd_simulations/raw/")
+path_results <-  paste0(path, "/09_svd_simulations/biodiv/")
+path_lorien <- paste0() # path to the svd output folder
 
 # terra options
 tmpFiles(remove = T)
 
 
 ### load some data ---------------------------------------------------------------
-eu_shp <- vect(paste0(path, "/reference_grids/eu_mask.shp"))
-hex_ecu <- shapefile(paste0(path, "/reference_grids/eu_mask_hexagons_25km.shp"))
+eu_shp <- vect(paste0(path, "/07_reference_grids/eu_mask.shp"))
+hex_ecu <- shapefile(paste0(path, "/07_reference_grids/eu_mask_hexagons_25km.shp"))
 
 # plot(hex_ecu)
 proj_laea <- "+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs"
@@ -58,8 +59,8 @@ sf_obj_forest_mask_ids <- sf_obj_forest_mask %>% st_drop_geometry()
 
 
 # load some data
-master_tab <- read.csv(paste0(path, "/svd_simulations/svd_simulations_ids.csv"), sep = ";")
-ref_grid <- rast(paste0(path, "reference_grids/reference_grid_10km.tif"))
+master_tab <- read.csv(paste0(path, "/09_svd_simulations/svd_simulations_ids.csv"), sep = ";")
+ref_grid <- rast(paste0(path, "/07_reference_grids/reference_grid_10km.tif"))
 
 # define agents to loop through
 agents <- c("wind", "fire", "bbtl", "mgmt")
@@ -76,7 +77,7 @@ for(i in c(1:120)){
   gcm <- master_tab[i, "GCM"]
   rep <- master_tab[i, "Rep"]
   
-  if(file.exists(paste0(path_results, "/biodiv/undist_vs_recently_dist_forest_", i, ".gpkg"))){next}
+  if(file.exists(paste0(path_results, "/undist_vs_recently_dist_forest_", i, ".gpkg"))){next}
   
   
   out_list_sim <- list()
@@ -88,10 +89,10 @@ for(i in c(1:120)){
     print(year)
     
     # total dist recently - get the 10y timestep file
-    wind <- rast(paste0(path_results, "wind/wind_", year, "_", rcp, "_", gcm, "_", rep, "_10year.tif"))
-    fire <- rast(paste0(path_results, "fire/fire_", year, "_", rcp, "_", gcm, "_", rep, "_10year.tif"))
-    bbtl <- rast(paste0(path_results, "bbtl/bbtl_", year, "_", rcp, "_", gcm, "_", rep, "_10year.tif"))
-    mgmt <- rast(paste0(path_results, "mgmt/mgmt_", year, "_", rcp, "_", gcm, "_", rep, "_10year.tif"))
+    wind <- rast(paste0(path_sims, "wind/wind_", year, "_", rcp, "_", gcm, "_", rep, "_10year.tif"))
+    fire <- rast(paste0(path_sims, "fire/fire_", year, "_", rcp, "_", gcm, "_", rep, "_10year.tif"))
+    bbtl <- rast(paste0(path_sims, "bbtl/bbtl_", year, "_", rcp, "_", gcm, "_", rep, "_10year.tif"))
+    mgmt <- rast(paste0(path_sims, "mgmt/mgmt_", year, "_", rcp, "_", gcm, "_", rep, "_10year.tif"))
     
     total_dist <- c(wind, fire, bbtl, mgmt)
     total_dist <- app(total_dist, "sum", cores = 36)
@@ -162,7 +163,7 @@ for(i in c(1:120)){
   }
 
   data_sim <- do.call(rbind, out_list_sim)
-  write_sf(data_sim, paste0(path_results, "/biodiv/undist_vs_recently_dist_forest_", i, ".gpkg"))
+  write_sf(data_sim, paste0(path_results, "/undist_vs_recently_dist_forest_", i, ".gpkg"))
   
   rm(data_sim)
   tmpFiles(remove = T)

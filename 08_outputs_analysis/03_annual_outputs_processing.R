@@ -40,8 +40,8 @@ library(terra)
 # define paths
 path <- "/.../"
 path_public <- "/.../"
-path_results <- paste0(path, "/svd_simulations/results_eu/")
-path_sims <- paste0(path, "/svd_simulations/results_eu/annual_outputs/")
+path_results <- paste0(path, "/10_results/")
+path_sims <- paste0(path, "/09_svd_simulations/annual_outputs/")
 
 ### load historical data -------------------------------------------------------
 cntrs <- list.files(paste0(path_public, "/Projects/DisturbanceMappingEurope/attribution/results/complexes"), ".gpkg$") %>% 
@@ -179,7 +179,6 @@ a_mgmt <- a %>%
 fire_dat <- list()
 for(i in c(1:90)){
   
-  if(!file.exists(paste0(path_sims, "/output_sim_eu_", i, "/fire_run_sim_eu_", i, ".csv"))){next}
   dat <- read_csv(paste0(path_sims, "/output_sim_eu_", i, "/fire_run_sim_eu_", i, ".csv"))
   dat <- dat %>% dplyr::select(year, realized_size) %>% 
     mutate(Year = as.numeric(year) + 2019) %>% 
@@ -212,7 +211,7 @@ fire_dat_plot <- fire_dat_plot %>%
 # bring historical data to same format
 a_fire_plot <- a_fire %>% 
   mutate(sim = "0",
-         period = ifelse(year > 2000, "2001-2020", "1986-2000"),
+         period = "1986-2020",
          year = year - 1985) %>% 
   dplyr::select(sim, year, burned_area = area_tot, period)
 
@@ -239,7 +238,6 @@ write_csv(fire_dat_plot_hist, paste0(path_results, "/fire_results_final.csv"))
 wind_dat <- list()
 for(i in c(1:90)){
   
-  if(!file.exists(paste0(path_sims, "/output_sim_eu_", i, "/wind_europe_sim_eu_", i, ".csv"))){next}
   dat <- read_csv(paste0(path_sims, "/output_sim_eu_", i, "/wind_europe_sim_eu_", i, ".csv"))
   dat <- dat %>% dplyr::select(year, cells_affected) %>% 
     mutate(Year = as.numeric(year) + 2019) %>% 
@@ -271,7 +269,7 @@ wind_dat_plot <- wind_dat_plot %>%
 
 a_wind_new_plot <- a_wind_new %>% 
   mutate(sim = "0",
-         period = ifelse(year > 2000, "2001-2020", "1986-2000"),
+         period = "1986-2020",
          year = year - 1985) %>% 
   dplyr::select(sim, year, dist_area = area_tot, period)
 
@@ -293,9 +291,7 @@ write_csv(wind_dat_plot_hist, paste0(path_results, "/wind_results_final.csv"))
 bbtl_dat <- list()
 for(i in c(1:90)){
   
-  if(!file.exists(paste0(path_sims, "/output_sim_eu_", i, "/barkbeetle.csv"))){next}
   dat <- read_csv(paste0(path_sims, "/output_sim_eu_", i, "/barkbeetle.csv"))
-  if(nrow(dat) == 0){next}
   dat <- dat %>% dplyr::select(year, n_impact) %>% 
     mutate(Year = as.numeric(year) + 2019) %>% 
     mutate(sim = paste(i),
@@ -327,7 +323,7 @@ bbtl_dat_plot <- bbtl_dat_plot %>%
 
 a_bbtl_new_plot <- a_bb_new %>% 
   mutate(sim = "0",
-         period = ifelse(year > 2000, "2001-2020", "1986-2000"),
+         period = "1986-2020",
          year = year - 1985) %>% 
   dplyr::select(sim, year, dist_area = area_tot, period)
 
@@ -364,145 +360,6 @@ wind_dat_plot <- wind_dat_plot_hist %>% mutate(agent = paste("Wind"))
 plot_dat_agents <- rbind(wind_dat_plot, fire_dat_plot, bbtl_dat_plot)
 
 write_csv(plot_dat_agents, paste0(path_results, "/all_agents_distarea_final.csv"))
-
-# 
-# # numbers fire ---
-# numbers_change <- fire_dat_plot %>%
-#   group_by(sim, year, scen, period) %>% 
-#   summarize(dist_area = sum(dist_area)) %>%
-#   group_by(year, scen, period) %>% 
-#   summarize(dist_area = mean(dist_area)) %>% 
-#   group_by(scen, period) %>%
-#   summarize(mean_area = mean(dist_area, na.rm = T),
-#             n = n(),
-#             se = sd(dist_area, na.rm = T) / sqrt(n()),
-#             sd_area = sd(dist_area, na.rm = T)) %>% 
-#   drop_na() %>% 
-#   mutate(ci95 = 1.96 * se)
-# 
-# numbers_change <- numbers_change %>%
-#   mutate(dist_rate = ifelse(period %in% c("1986-2000", "2001-2020"), mean_area/historical_area * 100, mean_area/total_forest_area * 100),
-#          freq = ifelse(period %in% c("1986-2000", "2001-2020"), 80 * historical_area/mean_area, 80 * total_forest_area/mean_area)) %>% 
-#   group_by(scen) %>%
-#   
-#   mutate(reference_hist1 = mean_area[period == "1986-2000"]) %>%
-#   mutate(percentage_diff_hist1 = (mean_area - reference_hist1) / reference_hist1 * 100) %>%
-#   mutate(reference_hist2 = mean_area[period == "2001-2020"]) %>%
-#   mutate(percentage_diff_hist2 = (mean_area - reference_hist2) / reference_hist2 * 100) %>%
-#   mutate(reference_hist3 = mean_area[period == "2021-2040"]) %>%
-#   mutate(percentage_diff_hist3 = (mean_area - reference_hist3) / reference_hist3 * 100) %>%
-#   mutate(
-#     se_percentage_diff_hist1 = sqrt((se / reference_hist1)^2 + (se / mean_area)^2) * 100,
-#     ci_95_hist1 = 1.96 * se_percentage_diff_hist1,
-#     se_percentage_diff_hist2 = sqrt((se / reference_hist2)^2 + (se / mean_area)^2) * 100,
-#     ci_95_hist2 = 1.96 * se_percentage_diff_hist2,
-#     se_percentage_diff_hist3 = sqrt((se / reference_hist3)^2 + (se / mean_area)^2) * 100,
-#     ci_95_hist2 = 1.96 * se_percentage_diff_hist3
-#   ) %>%
-#   ungroup() %>% 
-#   dplyr::select(-c(reference_hist1, reference_hist2, reference_hist3))
-# 
-# numbers_change %>% View()
-# 
-# 
-# 
-# ## numbres wind ---
-# numbers_change <- wind_dat_plot %>% 
-#   group_by(sim, year, scen, period) %>% 
-#   summarize(dist_area = sum(dist_area)) %>%
-#   group_by(year, scen, period) %>% 
-#   summarize(dist_area = mean(dist_area)) %>% 
-#   group_by(scen, period) %>%
-#   summarize(mean_area = mean(dist_area, na.rm = T),
-#             n = n(),
-#             se = sd(dist_area, na.rm = T) / sqrt(n()),
-#             sd_area = sd(dist_area, na.rm = T)) %>% 
-#   drop_na() %>% 
-#   mutate(ci95 = 1.96 * se)
-# 
-# 
-# wind_dat_plot %>% 
-#   group_by() %>% 
-#   summarize(q99 = quantile(dist_area, 0.99, na.rm  =T))
-# 
-# 
-# wind_dat_plot[which.max(wind_dat_plot$dist_area),]
-# wind_dat_plot_hist <- wind_dat_plot %>% filter(period == "2001-2020")
-# wind_dat_plot_hist[which.max(wind_dat_plot_hist$dist_area),]
-# na.omit(wind_dat_plot[wind_dat_plot$dist_area > 326104,])
-# 
-# numbers_change <- numbers_change %>%
-#   mutate(dist_rate = mean_area/total_forest_area * 100,
-#          freq = 80 * total_forest_area/mean_area) %>% 
-#   group_by(scen) %>%
-#   
-#   mutate(reference_hist1 = mean_area[period == "1986-2000"]) %>%
-#   mutate(percentage_diff_hist1 = (mean_area - reference_hist1) / reference_hist1 * 100) %>%
-#   mutate(reference_hist2 = mean_area[period == "2001-2020"]) %>%
-#   mutate(percentage_diff_hist2 = (mean_area - reference_hist2) / reference_hist2 * 100) %>%
-#   mutate(reference_hist3 = mean_area[period == "2021-2040"]) %>%
-#   mutate(percentage_diff_hist3 = (mean_area - reference_hist3) / reference_hist3 * 100) %>%
-#   mutate(
-#     se_percentage_diff_hist1 = sqrt((se / reference_hist1)^2 + (se / mean_area)^2) * 100,
-#     ci_95_hist1 = 1.96 * se_percentage_diff_hist1,
-#     se_percentage_diff_hist2 = sqrt((se / reference_hist2)^2 + (se / mean_area)^2) * 100,
-#     ci_95_hist2 = 1.96 * se_percentage_diff_hist2,
-#     se_percentage_diff_hist3 = sqrt((se / reference_hist3)^2 + (se / mean_area)^2) * 100,
-#     ci_95_hist2 = 1.96 * se_percentage_diff_hist3
-#   ) %>%
-#   ungroup() %>% 
-#   dplyr::select(-c(reference_hist1, reference_hist2, reference_hist3))
-# 
-# 
-# numbers_change %>% View()
-# 
-# 
-# 
-# ## numbres bbtl ---
-# numbers_change <- bbtl_dat_plot %>% 
-#   group_by(sim, year, scen, period) %>% 
-#   summarize(dist_area = sum(dist_area)) %>%
-#   group_by(year, scen, period) %>% 
-#   summarize(dist_area = mean(dist_area)) %>% 
-#   group_by(scen, period) %>%
-#   summarize(mean_area = mean(dist_area, na.rm = T),
-#             n = n(),
-#             se = sd(dist_area, na.rm = T) / sqrt(n()),
-#             sd_area = sd(dist_area, na.rm = T)) %>% 
-#   drop_na() %>% 
-#   mutate(ci95 = 1.96 * se)
-# 
-# numbers_change <- numbers_change %>%
-#   mutate(dist_rate = ifelse(period %in% c("1986-2000", "2001-2020"), mean_area/historical_area * 100, mean_area/total_forest_area * 100),
-#          freq = ifelse(period %in% c("1986-2000", "2001-2020"), 80 * historical_area/mean_area, 80 * total_forest_area/mean_area)) %>% 
-#   group_by(scen) %>%
-#   
-#   mutate(reference_hist1 = mean_area[period == "1986-2000"]) %>%
-#   mutate(percentage_diff_hist1 = (mean_area - reference_hist1) / reference_hist1 * 100) %>%
-#   mutate(reference_hist2 = mean_area[period == "2001-2020"]) %>%
-#   mutate(percentage_diff_hist2 = (mean_area - reference_hist2) / reference_hist2 * 100) %>%
-#   mutate(reference_hist3 = mean_area[period == "2021-2040"]) %>%
-#   mutate(percentage_diff_hist3 = (mean_area - reference_hist3) / reference_hist3 * 100) %>%
-#   mutate(
-#     se_percentage_diff_hist1 = sqrt((se / reference_hist1)^2 + (se / mean_area)^2) * 100,
-#     ci_95_hist1 = 1.96 * se_percentage_diff_hist1,
-#     se_percentage_diff_hist2 = sqrt((se / reference_hist2)^2 + (se / mean_area)^2) * 100,
-#     ci_95_hist2 = 1.96 * se_percentage_diff_hist2,
-#     se_percentage_diff_hist3 = sqrt((se / reference_hist3)^2 + (se / mean_area)^2) * 100,
-#     ci_95_hist2 = 1.96 * se_percentage_diff_hist3
-#   ) %>%
-#   ungroup() %>% 
-#   dplyr::select(-c(reference_hist1, reference_hist2, reference_hist3))
-# 
-# 
-# numbers_change %>% View()
-# 
-# 
-# numbers_change %>%
-#   group_by(period) %>%
-#   summarize(mean_area = mean(mean_area))
-# 
-# 
 
 
 ### numbres all --- 
@@ -545,8 +402,8 @@ numbers_change <- df_combined_sub %>% drop_na() %>%
          ci_low_freq = mean_dist_freq - 1.96 * SE_freq,
          ci_high_freq = mean_dist_freq + 1.96 * SE_freq)
 
-df_combined_sub_hist_21th <- as.vector(unlist(numbers_change[numbers_change$period == "2001-2020", "mean_dist_rate"]))[1]
-df_combined_sub_hist_21th_freq <- as.vector(unlist(numbers_change[numbers_change$period == "2001-2020", "mean_dist_freq"]))[1]
+df_combined_sub_hist_21th <- as.vector(unlist(numbers_change[numbers_change$period == "1986-2020", "mean_dist_rate"]))[1]
+df_combined_sub_hist_21th_freq <- as.vector(unlist(numbers_change[numbers_change$period == "1986-2020", "mean_dist_freq"]))[1]
 
 numbers_change <- numbers_change %>% 
   mutate(dist_rate_change = 100/df_combined_sub_hist_21th*mean_dist_rate,

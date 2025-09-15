@@ -75,10 +75,10 @@ bbox
 ### load data for forest mask, vegetation and lai  -----------------------------
 
 # forest mask - obtained from copernicus landcover data (forest type)
-forest_mask <- rast(paste0(path_new, "/gis/forest_mask_wgs.tif"))
+forest_mask <- rast(paste0(path_new, "/06_gis/forest_mask_wgs.tif"))
 
 # lai raster - obtained from MODIS through google earth engine
-lai_eu <- rast(paste0(path, "/gis/LAI_annual_mean_2020_2021.tif"))
+lai_eu <- rast(paste0(path, "/06_gis/LAI_annual_mean_2020_2021.tif"))
 lai_eu <- lai_eu/10
 lai_eu <- terra::project(lai_eu, proj_wgs)
 
@@ -170,7 +170,7 @@ translator_advanced <- function(x){
 
 # load cpp sampler
 # the sampler samples a number of species based on the diversity (Shannon Index) of the Brus et al data
-Rcpp::sourceCpp(paste0(path_new, "/initial_states/sampler/vegetation_sampler.cpp"))
+Rcpp::sourceCpp(paste0(path_new, "/03_initial_forest_states/sampler/vegetation_sampler.cpp"))
 nspecies_thresholds <- c(1.5, 2.5, 3.5, 100)
 
 
@@ -252,7 +252,7 @@ source("./functions/states_mapping_function.R")
 
 
 # now load the dnn states and lookup from the database
-dnn_lookup <- read_csv(paste0(path_new, "/initial_states/states_lookup_pruned.csv"))
+dnn_lookup <- read_csv(paste0(path_new, "/03_initial_forest_states/states_lookup_pruned.csv"))
 colnames(dnn_lookup) <- c("state", "stateID")
 
 
@@ -320,7 +320,7 @@ for(i in 1:nrow(bbox)){
     }else{next}
 
   # apply forest mask! From corine landcover data to each layer
-  forest_mask <- rast(paste0(path_new, "/gis/forest_mask_wgs.tif"))
+  forest_mask <- rast(paste0(path_new, "/06_gis/forest_mask_wgs.tif"))
   forest_mask_tile <- terra::crop(forest_mask, ext(height_rast))
   forest_mask_tile <- terra::resample(forest_mask_tile, height_rast)
   forest_mask_tile[forest_mask_tile == 0 | forest_mask_tile == 255] <- NA
@@ -330,7 +330,7 @@ for(i in 1:nrow(bbox)){
   if(!is.finite(max(values(height_rast_masked), na.rm = T))){next}
   
   # get LAI and project to canopy height layer
-  lai_sub <- rast(paste0(paste0(path_new, "/gis/LAI_annual_mean_2020_2021_projwgs.tif")))
+  lai_sub <- rast(paste0(paste0(path_new, "/06_gis/LAI_annual_mean_2020_2021_projwgs.tif")))
   lai_sub <- terra::crop(lai_sub, height_rast_masked)
   lai_sub <- terra::project(lai_sub, height_rast_masked)
   lai_sub <- terra::mask(lai_sub, height_rast_masked)
@@ -344,8 +344,8 @@ for(i in 1:nrow(bbox)){
   rm(lai_sub)
 
   # get vegetation STACK
-  if(file.exists(paste0(path, "/initial_states/vegetation/species_stack_", name, ".tif"))){
-    veg_stack <- rast(paste0(path, "/initial_states/vegetation/species_stack_", name, ".tif"))
+  if(file.exists(paste0(path, "/03_initial_forest_states/vegetation/species_stack_", name, ".tif"))){
+    veg_stack <- rast(paste0(path, "/03_initial_forest_states/vegetation/species_stack_", name, ".tif"))
   }else{next}
  
   # get the values but skip if no values are available 
@@ -531,7 +531,7 @@ for(i in 1:nrow(bbox)){
   # convert back to dataframe and save
   plot_df <- as.data.frame(r_df, xy = T)
   colnames(plot_df) <- c("x", "y", "svd_state_id")
-  #write.table(plot_df, paste0(path, "/initial_states/initialstate_", name, ".csv"), sep = ";")
+  #write.table(plot_df, paste0(path, "/03_initial_forest_states/initialstate_", name, ".csv"), sep = ";")
   
   # print progress and the number of NAs, EUGLs and Non_states
   total_forest_cells <- total_forest_cells + nrow(na.omit(height_df))
@@ -545,7 +545,7 @@ for(i in 1:nrow(bbox)){
   plot(height_rast_masked2)
  
   # save raster
-  writeRaster(r_df, paste0(path, "/initial_states/tiles_rasters/", name, ".tif"), overwrite = T)
+  writeRaster(r_df, paste0(path, "/03_initial_forest_states/tiles_rasters/", name, ".tif"), overwrite = T)
   
   # clean up
   tmpFiles(remove = T)
@@ -582,8 +582,8 @@ for(p in 1:5){
     cat(paste0(i, " / ", nrow(bbox), " \n"))
     name <- paste0(bbox[i, "top.coord"], bbox[i, "left.coord"])
     
-    if(file.exists(paste0(path, "/initial_states/tiles_rasters/", name, ".tif"))){
-      r <- rast(paste0(path, "/initial_states/tiles_rasters/", name, ".tif"))
+    if(file.exists(paste0(path, "/03_initial_forest_states/tiles_rasters/", name, ".tif"))){
+      r <- rast(paste0(path, "/03_initial_forest_states/tiles_rasters/", name, ".tif"))
       r <- terra::project(r, crs(height_rast), res = res(height_rast), method = "mode")
       
     }else{next}
@@ -597,7 +597,7 @@ for(p in 1:5){
   }
   
   plot(out_raster)
-  writeRaster(out_raster, paste0(path, "/initial_states/initial_ls_part", p, ".tif"), overwrite = T)
+  writeRaster(out_raster, paste0(path, "/03_initial_forest_states/initial_ls_part", p, ".tif"), overwrite = T)
   
   tmpFiles(remove = T) 
   gc()
@@ -606,18 +606,18 @@ for(p in 1:5){
 
 
 # load the three parts and combine them
-part1 <- rast(paste0(path, "/initial_states/initial_ls_part1.tif"))
-part2 <- rast(paste0(path, "/initial_states/initial_ls_part2.tif"))
-part3 <- rast(paste0(path, "/initial_states/initial_ls_part3.tif"))
-part4 <- rast(paste0(path, "/initial_states/initial_ls_part4.tif"))
-part5 <- rast(paste0(path, "/initial_states/initial_ls_part5.tif"))
+part1 <- rast(paste0(path, "/03_initial_forest_states/initial_ls_part1.tif"))
+part2 <- rast(paste0(path, "/03_initial_forest_states/initial_ls_part2.tif"))
+part3 <- rast(paste0(path, "/03_initial_forest_states/initial_ls_part3.tif"))
+part4 <- rast(paste0(path, "/03_initial_forest_states/initial_ls_part4.tif"))
+part5 <- rast(paste0(path, "/03_initial_forest_states/initial_ls_part5.tif"))
 
 # mosaic to one landscape layer
 veg_merged <- terra::mosaic(part1, part2, part3, part4, part5, fun = "min")
 plot(veg_merged)
 
 # save result
-writeRaster(veg_merged, paste0(path, "/initial_states/init_veg_wgs.tif"),
+writeRaster(veg_merged, paste0(path, "/03_initial_forest_states/init_veg_wgs.tif"),
             overwrite = T)
 
 # project to laea projection
@@ -625,7 +625,7 @@ proj_laea <- "+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GR
 veg_merged <- terra::project(veg_merged, proj_laea, res=100, method = "mode")
 
 # save result
-writeRaster(veg_merged, paste0(path, "/initial_states/init_veg.tif"),
+writeRaster(veg_merged, paste0(path, "/03_initial_forest_states/init_veg.tif"),
             datatype="INT2S", overwrite = T)
 
 
@@ -633,10 +633,10 @@ writeRaster(veg_merged, paste0(path, "/initial_states/init_veg.tif"),
 ### create rasters for SVD ---------------------------------------------------------
 
 #load soil raster - see script 03_initial_soilconditions.R
-init_soil_100 <- rast(paste0(path, "/initial_states/initial_soil_rast.tif"))
+init_soil_100 <- rast(paste0(path, "/03_initial_forest_states/initial_soil_rast.tif"))
 
 #load init veg file
-init_veg_100 <- rast(paste0(path, "/initial_states/init_veg.tif"))
+init_veg_100 <- rast(paste0(path, "/03_initial_forest_states/init_veg.tif"))
 
 # make sure soil raster and veg layer match!
 init_soil_100 <- terra::crop(init_soil_100, init_veg_100)  
@@ -647,12 +647,12 @@ init_soil_100 <- terra::mask(init_soil_100, init_veg_100)
 
 # save results
 writeRaster(init_soil_100, 
-            paste0(path, "/initial_states/init_soil.tif"),
+            paste0(path, "/03_initial_forest_states/init_soil.tif"),
             overwrite = T,
             datatype="INT4S")
 
 writeRaster(init_veg_100, 
-            paste0(path, "/initial_states/init_veg_v2.tif"),
+            paste0(path, "/03_initial_forest_states/init_veg_v2.tif"),
             datatype="INT2S", overwrite=T)  
 
 gc()
@@ -662,14 +662,14 @@ tmpFiles(remove = T)
 
 
 ### create residence time grid ---------------------------------------------------------------------
-init_restime <- rast(paste0(path, "/initial_states/init_veg_v2.tif"))
+init_restime <- rast(paste0(path, "/03_initial_forest_states/init_veg_v2.tif"))
 
 # fill up with random values between 1 and 10
 init_restime[][!is.na(init_restime[])] <- sample(1:10, sum(!is.na(init_restime[])), replace=T)
 init_restime <- terra::mask(init_restime, init_soil_100)
 plot(init_restime)
 writeRaster(init_restime,
-            paste0(path, "/initial_states/init_restime.tif"),
+            paste0(path, "/03_initial_forest_states/init_restime.tif"),
             datatype="INT2U", overwrite = T)
   
 

@@ -34,7 +34,7 @@ path <- "/.../"
 
 # Load wind rasters and reference grid
 wind_rasters <- rast(file.path(path, "/era5_wind.nc"))
-ref_grid_100km <- rast(file.path(path, "/reference_grids/reference_grid_100km.tif"))
+ref_grid_100km <- rast(file.path(path, "/07_reference_grids/reference_grid_100km.tif"))
 
 # Reproject wind rasters to match reference grid
 wind_rasters <- terra::project(wind_rasters, y = "epsg:3035", method = "bilinear")
@@ -107,4 +107,4 @@ wind_df <- left_join(direction_stats, speed_stats, by = "gridid")
 colnames(wind_df) <- c("gridid", "mean_dir", "sd_dir", "mean_speed", "sd_speed")
 
 # save result
-write.csv(wind_df, paste0(path, "/fire_module/wind_table.csv"), row.names = FALSE)
+write.csv(wind_df, paste0(path, "/04_disturbance_modules/fire_module/wind_table.csv"), row.names = FALSE)

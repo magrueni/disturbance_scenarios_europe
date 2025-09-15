@@ -39,10 +39,10 @@ path <- "/.../"
 
 # load some supporting data
 forest_lookup <- readRDS(paste0(path, "fire_module/gis/forest_lookup_grids.rds"))
-gridID_rast <- rast(paste0(path, "/reference_grids/gridID_10k.tif"))
+gridID_rast <- rast(paste0(path, "/07_reference_grids/gridID_10k.tif"))
 
 # load probability map and plot
-eu <- vect(paste0(path, "/gis/europe_lowres.shp"))
+eu <- vect(paste0(path, "/06_gis/europe_lowres.shp"))
 proba_rast <- rast(paste0(path, "/fire_module/models/probability_raster_baseline_cordex_biascorrected_10k.tif"))
 cols <- MetBrewer::met.brewer("Homer2", 100, "continuous", direction = -1)
 par(oma = c(2,2,2,2))

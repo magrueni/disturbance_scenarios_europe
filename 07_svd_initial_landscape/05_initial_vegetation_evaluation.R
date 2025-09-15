@@ -49,7 +49,7 @@ dnn_lookup <- read_csv(paste0(path, "/dnn/dnn_states_lookup.csv"))
 dnn_lookup <- dnn_lookup %>% mutate(stateID = as.numeric(stateID))
 
 # load init veg landscape 
-init_veg <- rast(paste0(path, "/initial_states/init_veg_v2.tif"))
+init_veg <- rast(paste0(path, "/03_initial_forest_states/init_veg_v2.tif"))
 
 
 ### compare to Blickensdorfer et al., 2023 data from Remote sensing for Germany ----------------------------------------
@@ -70,7 +70,7 @@ ger_agg <- aggregate(ger, fact = 10, fun = "modal")
 # 16,ODH
 # 17,ODL
 
-ger_shp <- vect(paste0(path, "/gis/countries/germany.shp"))
+ger_shp <- vect(paste0(path, "/06_gis/countries/germany.shp"))
 
 sp <- c("bepe", "fasy", "psme", "quro", "algl", "piab", "pisy", "lade", "abal")
 sp_name <- c("Quercus robur", "Fagus")
@@ -146,12 +146,12 @@ for(i in 1:nrow(sp_df)){
   plot(ger_shp, main = paste0("Initial forest landscape"), axes = F, box = F)
   plot(veg, col = "blue", add = T, axes = FALSE, box = F, legend = F)
   
-  dev.print(png, paste0(path, "/initial_states/evaluation/", sp_code, "_germany.png"), res = 300, width = 2500)
+  dev.print(png, paste0(path, "/03_initial_forest_states/evaluation/", sp_code, "_germany.png"), res = 300, width = 2500)
   
 }
 
 print(sp_df)
-write.csv(sp_df, paste0(path, "/initial_states/evaluation/species_area_germany.csv"))
+write.csv(sp_df, paste0(path, "/03_initial_forest_states/evaluation/species_area_germany.csv"))
 
 
 
@@ -177,7 +177,7 @@ nrow(dt_result[dt_result$number == 1, ])/ nrow(dt_result)
 
 
 # mask for some countries
-countries <- list.files(paste0(path, "/gis/countries"), pattern = ".shp", full.names = TRUE)
+countries <- list.files(paste0(path, "/06_gis/countries"), pattern = ".shp", full.names = TRUE)
 countries <- countries[!grepl("europe", countries)]
 
 countries_check <- c("norway", "sweden", "finland", "ireland", "portugal",
@@ -219,8 +219,8 @@ for(c in 1:length(countries_check)) {
 }
 
 df <- output_df %>% mutate(pcts_calc = round(as.numeric(pcts_calc), 2))
-write.csv(df, paste0(path, "/initial_states/evaluation/mixed_vs_pure_country_level.csv"))
-df <- read.csv(paste0(path, "/initial_states/evaluation/mixed_vs_pure_country_level.csv"))
+write.csv(df, paste0(path, "/03_initial_forest_states/evaluation/mixed_vs_pure_country_level.csv"))
+df <- read.csv(paste0(path, "/03_initial_forest_states/evaluation/mixed_vs_pure_country_level.csv"))
 
 df <- df %>% dplyr::select(countries, pcts, pcts_calc) %>% 
   mutate(pcts = as.numeric(pcts)) %>% 
@@ -242,7 +242,7 @@ p <- ggplot(df, aes(x = countries, y = value, fill = dat)) +
         legend.text = element_text(size = 16),
         axis.text.x = element_text(angle = 45, hjust = 1))
 p
-ggsave(p, filename = paste0(path, "/initial_states/evaluation/mixed_species_stand_per_country.png"), width = 8, height = 6)
+ggsave(p, filename = paste0(path, "/03_initial_forest_states/evaluation/mixed_species_stand_per_country.png"), width = 8, height = 6)
 
 
 
@@ -250,9 +250,9 @@ ggsave(p, filename = paste0(path, "/initial_states/evaluation/mixed_species_stan
 
 
 # load copernicus forest mask data
-forest_mask <- rast(paste0(path, "/gis/forest_mask_new_laea_masked.tif"))
+forest_mask <- rast(paste0(path, "/06_gis/forest_mask_new_laea_masked.tif"))
 forest_mask <- aggregate(forest_mask, fact = 10, fun = "modal", na.rm = T)
-init_veg <- rast(paste0(path, "/initial_states/init_veg_v2.tif"))
+init_veg <- rast(paste0(path, "/03_initial_forest_states/init_veg_v2.tif"))
 init_veg <- aggregate(init_veg, fact = 10, fun = "modal", na.rm = T)
 
 forest_crop <- terra::crop(extend(forest_mask, init_veg), init_veg)
@@ -293,7 +293,7 @@ dnn_lookup_new <- dnn_lookup %>%
 
 # check which countries are not well represented to get an idea about the regions
 # mask for some countries
-countries <- list.files(paste0(path, "/gis/countries"), pattern = ".shp", full.names = TRUE)
+countries <- list.files(paste0(path, "/06_gis/countries"), pattern = ".shp", full.names = TRUE)
 countries <- countries[!grepl("europe", countries)]
 
 # forest2000 data.
@@ -370,11 +370,11 @@ rownames(output_df) <- c(countries_names, "eu")
 colnames(output_df) <- c("broa_sum_c", "coni_sum_c", "mix_sum_c", "sum_cop",
                          "broa_sum_est_c", "coni_sum_est_c", "mix_sum_est_c", "sum_est")
 
-write.csv(output_df, paste0(path, "/initial_states/evaluation/forest_type_comparison.csv"))
+write.csv(output_df, paste0(path, "/03_initial_forest_states/evaluation/forest_type_comparison.csv"))
 
 
 # plotting
-df <- read.csv(paste0(path, "/initial_states/evaluation/forest_type_comparison.csv"))
+df <- read.csv(paste0(path, "/03_initial_forest_states/evaluation/forest_type_comparison.csv"))
 
 
 df_mixed <- df %>% rename("countries" = "X") %>% dplyr::select(countries, mix_sum_c , mix_sum_est_c, sum_cop, sum_est ) %>% 
@@ -396,13 +396,13 @@ p_mixed <- ggplot(df_mixed %>% filter(countries != "eu"), aes(x = countries, y =
         legend.text = element_text(size = 16),
         axis.text.x = element_text(angle = 45, hjust = 1))
 p_mixed
-ggsave(p_mixed, filename = paste0(path, "/initial_states/evaluation/mixed_species_stand_per_country_copernicus.png"), width = 8, height = 6)
+ggsave(p_mixed, filename = paste0(path, "/03_initial_forest_states/evaluation/mixed_species_stand_per_country_copernicus.png"), width = 8, height = 6)
 
 countries <- df_mixed %>% filter(countries != "eu")
 cor(countries$mix_sum_c, countries$mix_sum_est_c)
 
 
-df <- read.csv(paste0(path, "/initial_states/evaluation/forest_type_comparison.csv"))
+df <- read.csv(paste0(path, "/03_initial_forest_states/evaluation/forest_type_comparison.csv"))
 df_broa <- df %>% rename("countries" = "X") %>% dplyr::select(countries, broa_sum_c, broa_sum_est_c , sum_cop, sum_est  ) %>% 
   mutate(real_dat = 100/sum_cop * broa_sum_c,
          estimated = 100/sum_est * broa_sum_est_c ) %>% 
@@ -420,12 +420,12 @@ p_broa <- ggplot(df_broa %>% filter(countries != "eu"), aes(x = countries, y = v
         legend.text = element_text(size = 16),
         axis.text.x = element_text(angle = 45, hjust = 1))
 p_broa
-ggsave(p_broa, filename = paste0(path, "/initial_states/evaluation/broadleaved_species_stand_per_country_copernicus.png"), width = 8, height = 6)
+ggsave(p_broa, filename = paste0(path, "/03_initial_forest_states/evaluation/broadleaved_species_stand_per_country_copernicus.png"), width = 8, height = 6)
 
 countries <- df_broa %>% filter(countries != "eu")
 cor(countries$broa_sum_c, countries$broa_sum_est_c)
 
-df <- read.csv(paste0(path, "/initial_states/evaluation/forest_type_comparison.csv"))
+df <- read.csv(paste0(path, "/03_initial_forest_states/evaluation/forest_type_comparison.csv"))
 df_coni <- df %>% rename("countries" = "X") %>% dplyr::select(countries, coni_sum_c , coni_sum_est_c, sum_cop, sum_est  ) %>% 
   mutate(real_dat = 100/sum_cop * coni_sum_c,
          estimated = 100/sum_est * coni_sum_est_c ) %>% 
@@ -443,7 +443,7 @@ p_broa <- ggplot(df_coni %>% filter(countries != "eu"), aes(x = countries, y = v
         legend.text = element_text(size = 16),
         axis.text.x = element_text(angle = 45, hjust = 1))
 p_broa
-ggsave(p_broa, filename = paste0(path, "/initial_states/evaluation/coniferous_species_stand_per_country_copernicus.png"), width = 8, height = 6)
+ggsave(p_broa, filename = paste0(path, "/03_initial_forest_states/evaluation/coniferous_species_stand_per_country_copernicus.png"), width = 8, height = 6)
 
 countries <- df_coni %>% filter(countries != "eu")
 cor(countries$coni_sum_c, countries$coni_sum_est_c)
@@ -489,7 +489,7 @@ copern <- ggplot(df_long, aes(x = countries, y = value, fill = variable)) +
 
 copern
 ggsave(copern,
-       filename = paste0(path, "/initial_states/evaluation/species_stand_per_country_copernicus_all.png"),
+       filename = paste0(path, "/03_initial_forest_states/evaluation/species_stand_per_country_copernicus_all.png"),
        width = 6, height = 6)
 
 
